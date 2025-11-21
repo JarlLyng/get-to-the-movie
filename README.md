@@ -96,6 +96,39 @@ På baggrund af disse svar bliver der:
 
 ---
 
+## 2.1 UI Libraries (Design System)
+
+This project uses **Tailwind CSS** for layout and styling, combined with **shadcn/ui** for high‑quality, accessible React components.
+
+### Why this setup?
+
+- **Tailwind CSS** gives full creative freedom to build an 80s/Arnold-inspired aesthetic (neon, glow, metal, laser effects).
+- **shadcn/ui** provides beautifully designed, headless Radix‑based components such as:
+  - Button
+  - Card
+  - Select
+  - Radio Group
+  - Skeleton (used for loading states like “Arnold is thinking…”)
+  - Dialog / Sheet (optional future features)
+- Everything is fully themeable and easily adapted to the Arnold tone of voice.
+- Cursor understands this component system extremely well, making development faster.
+
+### Commands for installing shadcn/ui
+
+```bash
+npx shadcn-ui init
+```
+
+Install commonly used components:
+
+```bash
+npx shadcn-ui add button card select radio-group badge skeleton
+```
+
+Tailwind CSS is already preconfigured via `create-next-app`, but this project may extend it with a custom Arnold-inspired theme (colors like neon yellow, thermographic red, gunmetal gray, etc.).
+
+---
+
 ## 3. Core Features (v1)
 
 ### 3.1 Quiz flow
@@ -300,3 +333,55 @@ Byg en Next.js app med ovenstående quiz-flow, en server-side anbefalings-API in
 - Ren komponentstruktur
 - Robust API-integration (fejlhåndtering, tomme resultater)
 - En legende tone i UI-tekster og Arnold-kommentarer.
+
+---
+
+## 9. Deployment on GitHub Pages
+
+This project is configured for deployment on **GitHub Pages**.
+
+### Setup:
+- ✅ GitHub Actions workflow created (`.github/workflows/deploy.yml`)
+- ✅ Next.js configured with `output: "export"` and `basePath: "/get-to-the-movie"`
+- ✅ Static export generates files in `out/` directory
+- ✅ TMDb API calls moved to client-side for static hosting compatibility
+
+### GitHub Secrets:
+For GitHub Actions to build the site, add the TMDb API key as a GitHub Secret:
+
+1. Go to your repository → Settings → Secrets and variables → Actions
+2. Add a new secret named `TMDB_API_KEY` with value: `25403f33a1a8dab99f0a469ddc0fa699`
+
+### Hosting:
+The site will be publicly hosted at:
+```
+https://jarllyng.github.io/get-to-the-movie
+```
+
+### Local Development:
+For local development, create `.env.local` with:
+```
+NEXT_PUBLIC_TMDB_API_KEY=25403f33a1a8dab99f0a469ddc0fa699
+```
+
+**Note:** With static export, the API key will be included in the client bundle. This is acceptable for TMDb read-only API keys, but be aware that the key will be visible in the browser.
+
+---
+
+## 10. TMDb API Keys
+
+The project uses the following TMDb keys (do **not** commit them to GitHub):
+
+Your keys:
+- **API Read Access Token (v4)**: `eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQwM2YzM2ExYThkYWI5OWYwYTQ2OWRkYzBmYTY5OSIsIm5iZiI6MTc2Mzc2ODExMi43MTUwMDAyLCJzdWIiOiI2OTIwZjczMDg3NjA2MGIxYzYwNTkwMzIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.klQUrXnq6fyT6-lKKSllIn_I0MOeN1x5zAcQC8KwQHQ`
+- **API Key (v3)**: `25403f33a1a8dab99f0a469ddc0fa699`
+
+Add to `.env.local` for local development:
+```
+NEXT_PUBLIC_TMDB_API_KEY=25403f33a1a8dab99f0a469ddc0fa699
+```
+
+**Important:**  
+- For local development: Add to `.env.local` (not committed to git)
+- For GitHub Pages: Add `TMDB_API_KEY` as a GitHub Secret (see section 9)
+- **Note:** With static export, the API key will be visible in the client bundle. This is acceptable for TMDb read-only keys, but be aware of this limitation.

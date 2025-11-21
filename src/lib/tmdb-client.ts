@@ -1,8 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import type { QuizState, RecommendResponse, RecommendedMovie } from '@/types/quiz';
-import { getArnoldComment } from '@/lib/arnold-comments';
+import type { QuizState, RecommendedMovie } from '@/types/quiz';
+import { getArnoldComment } from './arnold-comments';
 
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
@@ -31,9 +29,9 @@ const GENRE_IDS = {
   adventure: 12,
 };
 
-function buildTMDBQuery(quiz: QuizState): URLSearchParams {
+function buildTMDBQuery(quiz: QuizState, apiKey: string): URLSearchParams {
   const params = new URLSearchParams();
-  params.set('api_key', TMDB_API_KEY!);
+  params.set('api_key', apiKey);
   params.set('include_adult', 'false');
   params.set('language', 'en-US');
   params.set('sort_by', 'popularity.desc');
@@ -95,10 +93,10 @@ async function fetchMoviesFromTMDB(params: URLSearchParams): Promise<any[]> {
   }
 }
 
-async function fetchArnoldMovies(): Promise<any[]> {
+async function fetchArnoldMovies(apiKey: string): Promise<any[]> {
   // Try cast-based search first
   const params = new URLSearchParams();
-  params.set('api_key', TMDB_API_KEY!);
+  params.set('api_key', apiKey);
   params.set('with_cast', ARNOLD_PERSON_ID.toString());
   params.set('sort_by', 'popularity.desc');
   
@@ -112,7 +110,7 @@ async function fetchArnoldMovies(): Promise<any[]> {
   const moviePromises = ARNOLD_MOVIE_IDS.slice(0, 10).map(async (id) => {
     try {
       const response = await fetch(
-        `${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}&language=en-US`
+        `${TMDB_BASE_URL}/movie/${id}?api_key=${apiKey}&language=en-US`
       );
       if (response.ok) {
         return await response.json();
@@ -172,52 +170,36 @@ function transformToRecommendedMovie(
   };
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    if (!TMDB_API_KEY) {
-      return NextResponse.json(
-        { error: 'TMDb API key not configured' },
-        { status: 500 }
-      );
-    }
-
-    const quiz: QuizState = await request.json();
-
-    let movies: any[] = [];
-
-    // Handle Arnold-specific requests
-    if (quiz.arnoldLevel === 'full') {
-      movies = await fetchArnoldMovies();
-    } else {
-      const params = buildTMDBQuery(quiz);
-      movies = await fetchMoviesFromTMDB(params);
-    }
-
-    // Select 1-3 movies based on preferences
-    const selectedMovies = selectMovies(movies, quiz, 3);
-    
-    if (selectedMovies.length === 0) {
-      return NextResponse.json<RecommendResponse>(
-        { movies: [] },
-        { status: 200 }
-      );
-    }
-
-    // Transform to RecommendedMovie format
-    const recommendedMovies: RecommendedMovie[] = selectedMovies.map((movie) =>
-      transformToRecommendedMovie(movie, quiz)
-    );
-
-    return NextResponse.json<RecommendResponse>(
-      { movies: recommendedMovies },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error in recommend API:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+export async function getRecommendations(
+  quiz: QuizState,
+  apiKey: string
+): Promise<RecommendedMovie[]> {
+  if (!apiKey) {
+    throw new Error('TMDb API key not provided');
   }
+
+  let movies: any[] = [];
+
+  // Handle Arnold-specific requests
+  if (quiz.arnoldLevel === 'full') {
+    movies = await fetchArnoldMovies(apiKey);
+  } else {
+    const params = buildTMDBQuery(quiz, apiKey);
+    movies = await fetchMoviesFromTMDB(params);
+  }
+
+  // Select 1-3 movies based on preferences
+  const selectedMovies = selectMovies(movies, quiz, 3);
+  
+  if (selectedMovies.length === 0) {
+    return [];
+  }
+
+  // Transform to RecommendedMovie format
+  const recommendedMovies: RecommendedMovie[] = selectedMovies.map((movie) =>
+    transformToRecommendedMovie(movie, quiz)
+  );
+
+  return recommendedMovies;
 }
 

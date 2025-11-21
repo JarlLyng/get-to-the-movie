@@ -6,6 +6,7 @@ import { QuizForm } from '@/components/Quiz/QuizForm';
 import { ResultList } from '@/components/Result/ResultList';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
+import { getRecommendations } from '@/lib/tmdb-client';
 
 export default function Home() {
   const [movies, setMovies] = useState<RecommendedMovie[]>([]);
@@ -18,20 +19,11 @@ export default function Home() {
     setMovies([]);
 
     try {
-      const response = await fetch('/api/recommend', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(quizState),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch recommendations');
-      }
-
-      const data = await response.json();
-      setMovies(data.movies || []);
+      // Use NEXT_PUBLIC_ prefix for client-side access in static export
+      const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY || '25403f33a1a8dab99f0a469ddc0fa699';
+      
+      const recommendedMovies = await getRecommendations(quizState, apiKey);
+      setMovies(recommendedMovies);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       setMovies([]);
