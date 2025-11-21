@@ -12,7 +12,7 @@ export function ResultList({ movies }: ResultListProps) {
     return (
       <div className="text-center py-12">
         <p className="text-lg text-muted-foreground">
-          Ingen film fundet. Prøv igen med andre indstillinger!
+          No movies found. Try again with different settings!
         </p>
       </div>
     );

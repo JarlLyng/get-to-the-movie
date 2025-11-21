@@ -51,38 +51,35 @@ This README is written so that an AI assistant (like Cursor) can understand the 
 
 > A silly, over-the-top **movie recommendation app**, where Arnold is your chaotic movie coach.
 
-Instead of klassiske filtre (“genre”, “imdb score”), brugeren svarer på nogle fjollede spørgsmål som:
+Instead of classic filters ("genre", "imdb score"), the user answers some silly questions like:
 
-1. **Brain level** – “Hvor meget hjerne har du tilbage i dag?”  
-   - `low` – “Max én catchphrase per scene, tak”  
-   - `medium` – “Jeg kan godt følge en nogenlunde plottråd”  
-   - `high` – “Jeg er klar til noget der kræver hjerne”
+1. **Brain level** – "How much brain do you have left today?"  
+   - `low` – "Max one catchphrase per scene, please"  
+   - `medium` – "I can follow a decent plot thread"  
+   - `high` – "I'm ready for something that requires brain power"
 
-2. **Arnold level** – “Hvor meget Arnold vil du have på skærmen?”  
-   - `none` – Ingen Arnold på skærmen, kun som “ånd”  
-   - `medium` – Arnold-vibe film (80’er/90’er action, sci-fi, etc.)  
-   - `full` – Kun Arnold-film, ellers glem det
+2. **Energy level** – "How much explosion in your evening?"  
+   - `low` – Slow / atmospheric  
+   - `medium` – Mixed tempo  
+   - `high` – Helicopters, explosions, screaming villains
 
-3. **Energy level** – “Hvor meget eksplosion i din aften?”  
-   - `low` – Langsom / stemningsfuld  
-   - `medium` – Blandet tempo  
-   - `high` – Helikopter, eksplosioner, skrigende skurke
+3. **Era preference**  
+   - `80s` – VHS / nostalgia  
+   - `90s` – Classic blockbuster  
+   - `modern` – Newer films  
+   - `any` – Don't care
 
-4. **Era preference**  
-   - `80s` – VHS/nostalgi  
-   - `90s` – Klassisk blockbuster  
-   - `modern` – Nyere film  
-   - `any` – Ligeglad
-
-5. **Mood**  
+4. **Mood**  
    - `funny` – Comedy / self-aware action  
-   - `action` – Ren action / sci-fi  
-   - `dark` – Lidt dystert / thriller
+   - `action` – Pure action / sci-fi  
+   - `dark` – A bit dark / thriller
 
-På baggrund af disse svar bliver der:
-- Bygget en **“movie profile”** (et sæt parametre)
-- Kaldt en **film-API** (TMDb) på serveren
-- Vist 1–3 anbefalede film med Arnold-kommentarer ovenpå.
+**Important:** The app **only recommends Arnold Schwarzenegger movies**. All recommendations are filtered to include only films where Arnold appears.
+
+Based on these answers:
+- A **"movie profile"** is built (a set of parameters)
+- The **movie API** (TMDb) is called on the client-side
+- 1–3 recommended Arnold movies are shown with Arnold-style commentary.
 
 ---
 
@@ -90,9 +87,9 @@ På baggrund af disse svar bliver der:
 
 - **Framework**: Next.js (App Router, `app/` directory)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS (eller moderne utility-first CSS – antag Tailwind som default)
-- **API-integration**: [TMDb API](https://www.themoviedb.org/documentation/api) for filmdata
-- **Runtime**: Server-side route handlers til API-kald
+- **Styling**: Tailwind CSS (modern utility-first CSS)
+- **API-integration**: [TMDb API](https://www.themoviedb.org/documentation/api) for movie data
+- **Runtime**: Client-side API calls (static export compatible)
 
 ---
 
@@ -133,48 +130,43 @@ Tailwind CSS is already preconfigured via `create-next-app`, but this project ma
 
 ### 3.1 Quiz flow
 
-- En enkelt side (`app/page.tsx`) med:
-  - Hero / intro (“Get to the Movie!” + Arnold-tone)
-  - En multi-step eller single-page quiz med 4–5 spørgsmål (se ovenfor).
-  - En “PUMP MY MOVIE!”-knap som sender quiz-svar til en intern API-route.
+- A single page (`app/page.tsx`) with:
+  - Hero / intro ("Get to the Movie!" + Arnold-tone)
+  - A single-page quiz with 4 questions (see above).
+  - A "PUMP MY MOVIE!" button that sends quiz answers to a client-side function.
 
-- Quiz state håndteres på klientsiden, fx:
+- Quiz state is handled on the client-side:
   ```ts
   export type BrainLevel = 'low' | 'medium' | 'high';
-  export type ArnoldLevel = 'none' | 'medium' | 'full';
+  export type ArnoldLevel = 'full'; // Always 'full' - only Arnold movies
   export type EnergyLevel = 'low' | 'medium' | 'high';
   export type Era = '80s' | '90s' | 'modern' | 'any';
   export type Mood = 'funny' | 'action' | 'dark';
 
   export type QuizState = {
     brainLevel: BrainLevel;
-    arnoldLevel: ArnoldLevel;
+    arnoldLevel: ArnoldLevel; // Always 'full'
     energy: EnergyLevel;
     era: Era;
     mood: Mood;
   };
   ```
 
-- Når brugeren trykker “PUMP MY MOVIE!”, sendes `QuizState` til en **server-side API route**.
+- When the user clicks "PUMP MY MOVIE!", `QuizState` is sent to a **client-side function** that fetches Arnold movies from TMDb.
 
 ### 3.2 Recommendation engine
 
-Der er to lag i anbefalingen:
+There are two layers in the recommendation:
 
-1. **Mapping fra quiz → søgeparametre til TMDb**  
-   Eksempel (pseudo):
-
-   - `arnoldLevel = 'full'`  
-     - Begræns søgning til kendte Arnold-film (enten via hårdkodet liste med TMDb IDs eller søgning på “Arnold Schwarzenegger” som cast).
-   - `era = '80s'`  
-     - Begræns `primary_release_date` til 1980–1989.
-   - `mood = 'action'` + `energy = 'high'`
-     - Brug genrer som “Action”, “Adventure”, “Sci-Fi”, sorteret efter popularity eller vote_average.
-
-   Resultat: et sæt parametre til TMDb Discover / Search endpoint.
+1. **Fetching Arnold movies from TMDb**  
+   The app always fetches Arnold Schwarzenegger movies:
+   - Uses TMDb cast search with Arnold's person ID (1100)
+   - Falls back to a hardcoded list of known Arnold movie IDs if needed
+   - Applies era filtering if specified (80s, 90s, modern)
+   - Selects 1-3 movies based on quiz preferences (brain level, energy, mood)
 
 2. **Arnold-commentary layer**  
-   Når en film er valgt, genereres en sjov kommentar baseret på quizprofilen + filmens metadata:
+   When a movie is selected, a fun comment is generated based on the quiz profile + movie metadata:
 
    Eksempel:
    ```ts
@@ -191,18 +183,18 @@ Der er to lag i anbefalingen:
    }
    ```
 
-### 3.3 API route
+### 3.3 Client-side API function
 
-Brug App Router route handlers, fx:
+Uses a client-side function:
 
-- `app/api/recommend/route.ts`
+- `src/lib/tmdb-client.ts`
 
-Ansvar:
-- Modtage `QuizState` (POST body)
-- Mappe quiz → TMDb query
-- Kald TMDb (med `fetch`) på serveren
-- Vælge 1–3 film
-- Returnere JSON til klienten
+Responsibilities:
+- Receive `QuizState` as parameter
+- Fetch Arnold movies from TMDb API (client-side)
+- Apply era filtering if specified
+- Select 1–3 movies based on preferences
+- Return array of recommended movies
 
 Pseudo-type for respons:
 
@@ -225,61 +217,59 @@ export type RecommendResponse = {
 
 ## 4. TMDb API Integration
 
-Vi bruger TMDb til at hente faktiske filmdata (titel, poster, år, osv.).
+We use TMDb to fetch actual movie data (title, poster, year, etc.).
 
 ### 4.1 Environment variables
 
-I `.env.local` (oprettes lokalt, ikke committed):
+In `.env.local` (created locally, not committed):
 
 ```bash
-TMDB_API_KEY=YOUR_TMDB_API_KEY_HERE
+NEXT_PUBLIC_TMDB_API_KEY=YOUR_TMDB_API_KEY_HERE
 ```
 
-I koden bruges det kun på server-side:
+In the code, it's used client-side:
 
 ```ts
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY || 'default_key';
 ```
 
-### 4.2 Eksempel på server-kald (pseudo)
+### 4.2 Client-side API call example
 
 ```ts
 const url = new URL('https://api.themoviedb.org/3/discover/movie');
-url.searchParams.set('api_key', TMDB_API_KEY!);
+url.searchParams.set('api_key', apiKey);
+url.searchParams.set('with_cast', '1100'); // Arnold's person ID
 url.searchParams.set('include_adult', 'false');
 url.searchParams.set('language', 'en-US');
-// Additional params derived from quiz: with_cast, primary_release_date.lte/gte, with_genres, sort_by, etc.
 
 const res = await fetch(url.toString());
 const data = await res.json();
 ```
 
-For Arnold-specifikt niveau `full` kan vi:
-- enten bruge `with_cast` med Arnold’s person ID, eller
-- bruge en hårdkodet liste med Arnold-film IDs, og slå dem op enkeltvis.
+For Arnold movies, we:
+- Use `with_cast` with Arnold's person ID (1100), or
+- Use a hardcoded list of Arnold movie IDs and fetch them individually as fallback.
 
 ---
 
 ## 5. UI & Styling
 
-Målet er et **fjollet, men relativt clean UI**:
+The goal is a **silly, but relatively clean UI**:
 
-- Mørk baggrund, lidt “laser/gym/80s”-vibes.
-- En tydelig quiz med ikoner/emojis.
-- Resultatside:
-  - Stor anbefalet film-card
-  - Poster-billede (fra TMDb’s image base URL)
-  - Titel, år, kort beskrivelse
-  - Et badge med fx “BRAIN OFF”, “NOSTALGIA MAX”, “HIGH EXPLOSIONS”
-  - Arnold-quote øverst.
+- Dark background, a bit of "laser/gym/80s" vibes.
+- A clear quiz with icons/emojis.
+- Results page:
+  - Large recommended movie card
+  - Poster image (from TMDb's image base URL)
+  - Title, year, short description
+  - Arnold-style quote at the top
 
-Forslag til komponentstruktur:
+Component structure:
 
-- `components/Layout.tsx` – generel layout/ramme
 - `components/Quiz/QuizForm.tsx` – quiz flow
-- `components/Quiz/QuizQuestion.tsx` – enkel question-komponent
-- `components/Result/ResultList.tsx` – liste med anbefalede film
-- `components/Result/MovieCard.tsx` – enkelt filmcard med Arnold-kommentar
+- `components/Quiz/QuizQuestion.tsx` – single question component
+- `components/Result/ResultList.tsx` – list of recommended movies
+- `components/Result/MovieCard.tsx` – single movie card with Arnold comment
 
 ---
 
@@ -287,20 +277,20 @@ Forslag til komponentstruktur:
 
 ### v1 (MVP)
 
-- [ ] Single-page quiz med 4–5 spørgsmål
-- [ ] `QuizState`-model i TypeScript
-- [ ] `app/api/recommend/route.ts` med TMDb integration
-- [ ] 1–3 anbefalede film returneres
-- [ ] Simpel UI med Tailwind (eller tilsvarende)
-- [ ] Arnold-commentary funktion der genererer en sætning pr. film
+- [x] Single-page quiz with 4 questions
+- [x] `QuizState` model in TypeScript
+- [x] Client-side TMDb integration (`src/lib/tmdb-client.ts`)
+- [x] 1–3 recommended Arnold movies returned
+- [x] Simple UI with Tailwind CSS
+- [x] Arnold-commentary function that generates a sentence per movie
+- [x] Only Arnold movies are recommended
 
 ### v2 (Nice to have)
 
-- [ ] “Not pumped enough – give me another” knap (nyt kald med samme quizprofil)
-- [ ] Mulighed for at kopiere et “Arnold-anbefaling”-citat (copy to clipboard)
-- [ ] Loading-states med “Arnold is thinking…”-tekster
-- [ ] Flere quizspørgsmål / finere-grained kategorier
-- [ ] Mulighed for at låse app’en til “kun Arnold-film” mode
+- [ ] "Not pumped enough – give me another" button (new call with same quiz profile)
+- [ ] Ability to copy an "Arnold-recommendation" quote (copy to clipboard)
+- [x] Loading states with "Arnold is thinking…" text
+- [ ] More quiz questions / finer-grained categories
 
 ---
 
@@ -311,28 +301,29 @@ Standard Next.js workflow:
 ```bash
 npm install
 npm run dev
-# eller
+# or
 yarn
 yarn dev
 ```
 
-- App kører på `http://localhost:3000`
-- Hovedindgang: `app/page.tsx`
-- API route: `app/api/recommend/route.ts`
+- App runs on `http://localhost:3000`
+- Main entry: `app/page.tsx`
+- Client-side API function: `src/lib/tmdb-client.ts`
 
-Husk at oprette `.env.local` med `TMDB_API_KEY` før API-kald bygges.
+Remember to create `.env.local` with `NEXT_PUBLIC_TMDB_API_KEY` before building.
 
 ---
 
-## 8. Kort til AI-assistent (Cursor)
+## 8. Notes for AI Assistant (Cursor)
 
-**Formål:**  
-Byg en Next.js app med ovenstående quiz-flow, en server-side anbefalings-API integreret med TMDb, og et fjollet, Arnold-inspireret UI. Fokus er på:
+**Purpose:**  
+Build a Next.js app with the above quiz flow, a client-side recommendation function integrated with TMDb, and a silly, Arnold-inspired UI. Focus on:
 
-- Klar og typed domænemodel (`QuizState`, `RecommendedMovie`)
-- Ren komponentstruktur
-- Robust API-integration (fejlhåndtering, tomme resultater)
-- En legende tone i UI-tekster og Arnold-kommentarer.
+- Clear and typed domain model (`QuizState`, `RecommendedMovie`)
+- Clean component structure
+- Robust API integration (error handling, empty results)
+- A playful tone in UI texts and Arnold comments.
+- **Important:** Only Arnold Schwarzenegger movies should be recommended.
 
 ---
 

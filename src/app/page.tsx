@@ -47,7 +47,7 @@ export default function Home() {
             GET TO THE MOVIE! 🎬💪
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Arnold er din kaotiske film-coach. Svar på spørgsmålene og få anbefalet perfekte film med over-the-top Arnold-kommentarer!
+            Arnold is your chaotic movie coach. Answer the questions and get recommended perfect Arnold movies with over-the-top Arnold-style commentary!
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-center mt-6 text-lg font-semibold text-yellow-500">
-                  Arnold tænker...
+                  Arnold is thinking...
                 </p>
               </Card>
             )}
@@ -80,12 +80,12 @@ export default function Home() {
         ) : (
           <div className="space-y-8">
             <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">Dine anbefalinger</h2>
+              <h2 className="text-3xl font-bold">Your Recommendations</h2>
               <button
                 onClick={handleReset}
                 className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg transition-colors"
               >
-                Prøv igen
+                Try Again
               </button>
             </div>
             <ResultList movies={movies} />
@@ -95,7 +95,7 @@ export default function Home() {
                   onClick={handleReset}
                   className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all uppercase tracking-wider"
                 >
-                  Få flere anbefalinger
+                  Get More Recommendations
                 </button>
               </div>
             )}

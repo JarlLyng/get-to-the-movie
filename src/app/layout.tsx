@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Get to the Movie! 🎬💪",
-  description: "Arnold Schwarzenegger-inspireret film-anbefalings app. Svar på quiz-spørgsmålene og få anbefalet perfekte film!",
+  description: "Arnold Schwarzenegger-inspired movie recommendation app. Answer the quiz questions and get recommended perfect Arnold movies!",
 };
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="da">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

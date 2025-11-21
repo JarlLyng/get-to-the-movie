@@ -178,18 +178,30 @@ export async function getRecommendations(
     throw new Error('TMDb API key not provided');
   }
 
-  let movies: any[] = [];
+  // Always fetch Arnold movies
+  const movies = await fetchArnoldMovies(apiKey);
 
-  // Handle Arnold-specific requests
-  if (quiz.arnoldLevel === 'full') {
-    movies = await fetchArnoldMovies(apiKey);
-  } else {
-    const params = buildTMDBQuery(quiz, apiKey);
-    movies = await fetchMoviesFromTMDB(params);
+  // Apply era filtering if specified
+  let filteredMovies = movies;
+  if (quiz.era === '80s') {
+    filteredMovies = movies.filter((movie) => {
+      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
+      return year >= 1980 && year <= 1989;
+    });
+  } else if (quiz.era === '90s') {
+    filteredMovies = movies.filter((movie) => {
+      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
+      return year >= 1990 && year <= 1999;
+    });
+  } else if (quiz.era === 'modern') {
+    filteredMovies = movies.filter((movie) => {
+      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
+      return year >= 2000;
+    });
   }
 
   // Select 1-3 movies based on preferences
-  const selectedMovies = selectMovies(movies, quiz, 3);
+  const selectedMovies = selectMovies(filteredMovies, quiz, 3);
   
   if (selectedMovies.length === 0) {
     return [];

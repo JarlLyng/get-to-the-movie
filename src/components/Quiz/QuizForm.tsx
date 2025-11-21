@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { QuizState, BrainLevel, ArnoldLevel, EnergyLevel, Era, Mood } from '@/types/quiz';
+import type { QuizState, BrainLevel, EnergyLevel, Era, Mood } from '@/types/quiz';
 import { QuizQuestion } from './QuizQuestion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,7 +13,7 @@ type QuizFormProps = {
 
 const defaultState: QuizState = {
   brainLevel: 'medium',
-  arnoldLevel: 'medium',
+  arnoldLevel: 'full', // Always Arnold movies
   energy: 'medium',
   era: 'any',
   mood: 'action',
@@ -24,42 +24,32 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(quizState);
+    // Ensure arnoldLevel is always 'full'
+    onSubmit({ ...quizState, arnoldLevel: 'full' });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <Card className="p-6 space-y-6">
         <QuizQuestion<BrainLevel>
-          question="Hvor meget hjerne har du tilbage i dag?"
+          question="How much brain do you have left today?"
           value={quizState.brainLevel}
           onChange={(value) => setQuizState({ ...quizState, brainLevel: value })}
           options={[
-            { value: 'low', label: 'Max én catchphrase per scene, tak' },
-            { value: 'medium', label: 'Jeg kan godt følge en nogenlunde plottråd' },
-            { value: 'high', label: 'Jeg er klar til noget der kræver hjerne' },
-          ]}
-        />
-
-        <QuizQuestion<ArnoldLevel>
-          question="Hvor meget Arnold vil du have på skærmen?"
-          value={quizState.arnoldLevel}
-          onChange={(value) => setQuizState({ ...quizState, arnoldLevel: value })}
-          options={[
-            { value: 'none', label: 'Ingen Arnold på skærmen, kun som "ånd"' },
-            { value: 'medium', label: 'Arnold-vibe film (80\'er/90\'er action, sci-fi, etc.)' },
-            { value: 'full', label: 'Kun Arnold-film, ellers glem det' },
+            { value: 'low', label: 'Max one catchphrase per scene, please' },
+            { value: 'medium', label: 'I can follow a decent plot thread' },
+            { value: 'high', label: 'I\'m ready for something that requires brain power' },
           ]}
         />
 
         <QuizQuestion<EnergyLevel>
-          question="Hvor meget eksplosion i din aften?"
+          question="How much explosion in your evening?"
           value={quizState.energy}
           onChange={(value) => setQuizState({ ...quizState, energy: value })}
           options={[
-            { value: 'low', label: 'Langsom / stemningsfuld' },
-            { value: 'medium', label: 'Blandet tempo' },
-            { value: 'high', label: 'Helikopter, eksplosioner, skrigende skurke' },
+            { value: 'low', label: 'Slow / atmospheric' },
+            { value: 'medium', label: 'Mixed tempo' },
+            { value: 'high', label: 'Helicopters, explosions, screaming villains' },
           ]}
         />
 
@@ -68,10 +58,10 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
           value={quizState.era}
           onChange={(value) => setQuizState({ ...quizState, era: value })}
           options={[
-            { value: '80s', label: 'VHS/nostalgi' },
-            { value: '90s', label: 'Klassisk blockbuster' },
-            { value: 'modern', label: 'Nyere film' },
-            { value: 'any', label: 'Ligeglad' },
+            { value: '80s', label: 'VHS / nostalgia' },
+            { value: '90s', label: 'Classic blockbuster' },
+            { value: 'modern', label: 'Newer films' },
+            { value: 'any', label: 'Don\'t care' },
           ]}
         />
 
@@ -81,8 +71,8 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
           onChange={(value) => setQuizState({ ...quizState, mood: value })}
           options={[
             { value: 'funny', label: 'Comedy / self-aware action' },
-            { value: 'action', label: 'Ren action / sci-fi' },
-            { value: 'dark', label: 'Lidt dystert / thriller' },
+            { value: 'action', label: 'Pure action / sci-fi' },
+            { value: 'dark', label: 'A bit dark / thriller' },
           ]}
         />
       </Card>
@@ -94,7 +84,7 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
           disabled={isLoading}
           className="text-lg px-8 py-6 font-bold uppercase tracking-wider"
         >
-          {isLoading ? 'Arnold tænker...' : 'PUMP MY MOVIE!'}
+          {isLoading ? 'Arnold is thinking...' : 'PUMP MY MOVIE!'}
         </Button>
       </div>
     </form>
