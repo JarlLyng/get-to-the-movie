@@ -17,37 +17,42 @@ export function MovieCard({ movie }: MovieCardProps) {
     : null;
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden border-slate-800 bg-slate-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 hover:border-orange-500/50 group p-0 gap-0">
       <div className="flex flex-col md:flex-row">
         {posterUrl && (
-          <div className="relative w-full md:w-48 h-64 md:h-auto flex-shrink-0">
+          <div className="relative w-full md:w-64 h-80 md:h-auto flex-shrink-0 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <Image
               src={posterUrl}
               alt={`${movie.title} poster`}
               fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 192px"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, 256px"
             />
           </div>
         )}
-        <div className="flex-1">
-          <CardHeader>
-            <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 p-6 md:p-8">
+          <CardHeader className="p-0 pb-4">
+            <div className="flex items-start justify-between gap-4 mb-3">
               <div className="flex-1">
-                <CardTitle className="text-2xl mb-2">{movie.title}</CardTitle>
+                <CardTitle className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                  {movie.title}
+                </CardTitle>
                 {movie.releaseYear && (
-                  <Badge variant="secondary" className="mb-2">
+                  <Badge variant="secondary" className="bg-slate-800 text-slate-200 border-slate-700 text-sm px-3 py-1">
                     {movie.releaseYear}
                   </Badge>
                 )}
               </div>
             </div>
-            <CardDescription className="text-base font-semibold text-yellow-500 dark:text-yellow-400 italic">
-              "{movie.arnoldComment}"
-            </CardDescription>
+            <div className="mt-4 p-4 bg-gradient-to-r from-yellow-500/20 via-orange-500/20 to-red-500/20 border-l-4 border-orange-500 rounded-r-lg">
+              <CardDescription className="text-lg font-bold text-yellow-400 dark:text-yellow-300 italic leading-relaxed">
+                "{movie.arnoldComment}"
+              </CardDescription>
+            </div>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+          <CardContent className="p-0 pt-6">
+            <p className="text-base text-slate-300 leading-relaxed">
               {movie.overview}
             </p>
           </CardContent>

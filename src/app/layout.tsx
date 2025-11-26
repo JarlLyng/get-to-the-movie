@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Get to the Movie! 🎬💪",
+  title: "Get to the Movie!",
   description: "Arnold Schwarzenegger-inspired movie recommendation app. Answer the quiz questions and get recommended perfect Arnold movies!",
 };
 

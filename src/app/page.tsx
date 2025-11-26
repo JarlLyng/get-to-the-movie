@@ -39,61 +39,86 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-800 to-black text-foreground">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-foreground relative overflow-hidden">
+      {/* Grid pattern background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none"></div>
+      <div className="relative container mx-auto px-4 py-16 max-w-5xl z-10">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
-            GET TO THE MOVIE! 🎬💪
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <div className="text-center mb-16 space-y-6">
+          <div className="inline-flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 blur-2xl opacity-30 animate-pulse"></div>
+            <h1 className="relative text-6xl md:text-7xl font-extrabold mb-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent tracking-tight">
+              GET TO THE MOVIE!
+            </h1>
+          </div>
+          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
             Arnold is your chaotic movie coach. Answer the questions and get recommended perfect Arnold movies with over-the-top Arnold-style commentary!
           </p>
         </div>
 
         {/* Quiz or Results */}
         {!hasSubmitted || movies.length === 0 ? (
-          <div>
+          <div className="space-y-8 relative z-20">
             <QuizForm onSubmit={handleQuizSubmit} isLoading={isLoading} />
             
             {isLoading && (
-              <Card className="mt-8 p-6">
-                <div className="space-y-4">
-                  <Skeleton className="h-8 w-3/4" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6" />
-                  <div className="flex gap-4 mt-6">
-                    <Skeleton className="h-64 w-48" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-6 w-1/2" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
+              <Card className="mt-8 p-8 border-slate-800 bg-slate-900/50 backdrop-blur-sm shadow-2xl">
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <Skeleton className="h-10 w-3/4 bg-slate-800" />
+                    <Skeleton className="h-5 w-full bg-slate-800" />
+                    <Skeleton className="h-5 w-5/6 bg-slate-800" />
+                  </div>
+                  <div className="flex gap-6 mt-8">
+                    <Skeleton className="h-80 w-56 rounded-lg bg-slate-800" />
+                    <div className="flex-1 space-y-3">
+                      <Skeleton className="h-8 w-2/3 bg-slate-800" />
+                      <Skeleton className="h-4 w-full bg-slate-800" />
+                      <Skeleton className="h-4 w-full bg-slate-800" />
+                      <Skeleton className="h-4 w-4/5 bg-slate-800" />
                     </div>
                   </div>
                 </div>
-                <p className="text-center mt-6 text-lg font-semibold text-yellow-500">
-                  Arnold is thinking...
-                </p>
+                <div className="mt-8 text-center">
+                  <p className="text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent animate-pulse">
+                    Arnold is thinking...
+                  </p>
+                </div>
               </Card>
             )}
           </div>
         ) : (
-          <div className="space-y-8">
-            <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">Your Recommendations</h2>
+          <div className="space-y-10 relative z-20">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                  Your Recommendations
+                </h2>
+                <p className="text-slate-400 mt-2">Arnold has chosen these movies for you</p>
+              </div>
               <button
-                onClick={handleReset}
-                className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded-lg transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleReset();
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer relative z-10"
               >
                 Try Again
               </button>
             </div>
             <ResultList movies={movies} />
             {movies.length > 0 && (
-              <div className="text-center pt-8">
+              <div className="text-center pt-8 relative z-10">
                 <button
-                  onClick={handleReset}
-                  className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all uppercase tracking-wider"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleReset();
+                  }}
+                  className="px-8 py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-black font-bold rounded-xl transition-all uppercase tracking-wider shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer"
                 >
                   Get More Recommendations
                 </button>

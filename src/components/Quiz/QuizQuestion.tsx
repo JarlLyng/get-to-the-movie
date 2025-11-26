@@ -17,24 +17,30 @@ export function QuizQuestion<T extends string>({
   options,
 }: QuizQuestionProps<T>) {
   return (
-    <div className="space-y-4">
-      <Label className="text-lg font-semibold text-foreground">
+    <div className="space-y-6">
+      <Label className="text-2xl md:text-3xl font-bold text-slate-100 block mb-6 text-center">
         {question}
       </Label>
-      <RadioGroup value={value} onValueChange={onChange}>
-        <div className="space-y-3">
-          {options.map((option) => (
-            <div key={option.value} className="flex items-center space-x-2">
-              <RadioGroupItem value={option.value} id={option.value} />
-              <Label
-                htmlFor={option.value}
-                className="text-base font-normal cursor-pointer"
-              >
-                {option.label}
-              </Label>
-            </div>
-          ))}
-        </div>
+      <RadioGroup value={value || ''} onValueChange={onChange} className="space-y-4">
+        {options.map((option) => (
+          <div 
+            key={option.value} 
+            className="flex items-start space-x-4 p-5 rounded-xl border-2 border-slate-800 bg-slate-800/30 hover:bg-slate-800/50 hover:border-orange-500 transition-all cursor-pointer group data-[selected=true]:border-orange-500 data-[selected=true]:bg-slate-800/70"
+            data-selected={value === option.value}
+          >
+            <RadioGroupItem 
+              value={option.value} 
+              id={option.value}
+              className="mt-1 border-slate-600 group-hover:border-orange-500 data-[state=checked]:border-orange-500"
+            />
+            <Label
+              htmlFor={option.value}
+              className="text-lg font-medium text-slate-200 cursor-pointer flex-1 leading-relaxed group-hover:text-white transition-colors"
+            >
+              {option.label}
+            </Label>
+          </div>
+        ))}
       </RadioGroup>
     </div>
   );
