@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { QuizState, RecommendedMovie } from '@/types/quiz';
 import { QuizForm } from '@/components/Quiz/QuizForm';
 import { ResultList } from '@/components/Result/ResultList';
@@ -13,11 +13,13 @@ export default function Home() {
   const [movies, setMovies] = useState<RecommendedMovie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleQuizSubmit = async (quizState: QuizState) => {
     setIsLoading(true);
     setHasSubmitted(true);
     setMovies([]);
+    setError(null);
 
     // Track quiz completion
     trackEvent(UmamiEvents.QUIZ_COMPLETED, {
@@ -29,7 +31,11 @@ export default function Home() {
 
     try {
       // Use NEXT_PUBLIC_ prefix for client-side access in static export
-      const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY || '25403f33a1a8dab99f0a469ddc0fa699';
+      const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+      
+      if (!apiKey) {
+        throw new Error('TMDb API key is not configured');
+      }
       
       const recommendedMovies = await getRecommendations(quizState, apiKey);
       setMovies(recommendedMovies);
@@ -39,9 +45,14 @@ export default function Home() {
         trackEvent(UmamiEvents.RECOMMENDATIONS_RECEIVED, {
           count: recommendedMovies.length.toString(),
         });
+      } else {
+        setError('No movies found. Try different settings!');
       }
     } catch (error) {
-      console.error('Error fetching recommendations:', error);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to fetch recommendations. Please try again.';
+      setError(errorMessage);
       setMovies([]);
     } finally {
       setIsLoading(false);
@@ -53,6 +64,7 @@ export default function Home() {
     setMovies([]);
     setHasSubmitted(false);
     setIsLoading(false);
+    setError(null);
   };
 
   return (
@@ -76,9 +88,17 @@ export default function Home() {
         </div>
 
         {/* Quiz or Results */}
-        {!hasSubmitted || movies.length === 0 ? (
+        {!hasSubmitted || (movies.length === 0 && !error) ? (
           <div className="space-y-8 relative z-20">
             <QuizForm onSubmit={handleQuizSubmit} isLoading={isLoading} />
+            
+            {error && !isLoading && (
+              <Card className="mt-8 p-6 border-red-500/50 bg-red-950/20 backdrop-blur-sm">
+                <p className="text-red-400 text-center font-medium">
+                  {error}
+                </p>
+              </Card>
+            )}
             
             {isLoading && (
               <Card className="mt-8 p-8 border-slate-800 bg-slate-900/50 backdrop-blur-sm shadow-2xl">
@@ -123,6 +143,7 @@ export default function Home() {
                   handleReset();
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer relative z-10"
+                aria-label="Reset quiz and try again"
               >
                 Try Again
               </button>
@@ -138,6 +159,7 @@ export default function Home() {
                     handleReset();
                   }}
                   className="px-8 py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-black font-bold rounded-xl transition-all uppercase tracking-wider shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer"
+                  aria-label="Get more movie recommendations"
                 >
                   Get More Recommendations
                 </button>

@@ -24,7 +24,7 @@ export function MovieCard({ movie }: MovieCardProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <Image
               src={posterUrl}
-              alt={`${movie.title} poster`}
+              alt={`${movie.title} (${movie.releaseYear || 'Unknown year'}) movie poster`}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, 256px"

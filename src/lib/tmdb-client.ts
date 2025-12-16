@@ -76,7 +76,7 @@ function buildTMDBQuery(quiz: QuizState, apiKey: string): URLSearchParams {
   return params;
 }
 
-async function fetchMoviesFromTMDB(params: URLSearchParams): Promise<any[]> {
+async function fetchMoviesFromTMDB(params: URLSearchParams): Promise<TMDBMovie[]> {
   try {
     const url = `${TMDB_BASE_URL}/discover/movie?${params.toString()}`;
     const response = await fetch(url);
@@ -93,7 +93,7 @@ async function fetchMoviesFromTMDB(params: URLSearchParams): Promise<any[]> {
   }
 }
 
-async function fetchArnoldMovies(apiKey: string): Promise<any[]> {
+async function fetchArnoldMovies(apiKey: string): Promise<TMDBMovie[]> {
   // Try cast-based search first
   const params = new URLSearchParams();
   params.set('api_key', apiKey);
@@ -122,10 +122,10 @@ async function fetchArnoldMovies(apiKey: string): Promise<any[]> {
   });
   
   const results = await Promise.all(moviePromises);
-  return results.filter((movie) => movie !== null);
+  return results.filter((movie): movie is TMDBMovie => movie !== null);
 }
 
-function selectMovies(movies: any[], quiz: QuizState, count: number = 3): any[] {
+function selectMovies(movies: TMDBMovie[], quiz: QuizState, count: number = 3): TMDBMovie[] {
   if (movies.length === 0) return [];
   
   // Filter and sort based on quiz preferences
@@ -147,8 +147,18 @@ function selectMovies(movies: any[], quiz: QuizState, count: number = 3): any[] 
   return filtered.slice(0, count);
 }
 
+type TMDBMovie = {
+  id: number;
+  title: string;
+  overview: string | null;
+  poster_path: string | null;
+  release_date: string | null;
+  vote_average: number | null;
+  popularity: number | null;
+};
+
 function transformToRecommendedMovie(
-  movie: any,
+  movie: TMDBMovie,
   quiz: QuizState
 ): RecommendedMovie {
   const releaseYear = movie.release_date
@@ -165,7 +175,7 @@ function transformToRecommendedMovie(
       quiz,
       movieTitle: movie.title,
       year: releaseYear || 0,
-      voteAverage: movie.vote_average,
+      voteAverage: movie.vote_average ?? undefined,
     }),
   };
 }
