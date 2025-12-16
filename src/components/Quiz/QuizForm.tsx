@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { QuizState, BrainLevel, EnergyLevel, Era, Mood } from '@/types/quiz';
 import { QuizQuestion } from './QuizQuestion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { trackEvent, UmamiEvents } from '@/lib/umami';
 
 type QuizFormProps = {
   onSubmit: (quizState: QuizState) => void;
@@ -60,14 +61,26 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
   const [quizState, setQuizState] = useState<Partial<QuizState>>(defaultState);
   const [currentStep, setCurrentStep] = useState(0);
 
+  // Track quiz started on mount
+  useEffect(() => {
+    trackEvent(UmamiEvents.QUIZ_STARTED);
+  }, []);
+
   const handleNext = () => {
     if (currentStep < questions.length - 1) {
+      trackEvent(UmamiEvents.QUIZ_NEXT_CLICKED, {
+        currentStep: (currentStep + 1).toString(),
+        totalSteps: questions.length.toString(),
+      });
       setCurrentStep(currentStep + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 0) {
+      trackEvent(UmamiEvents.QUIZ_PREVIOUS_CLICKED, {
+        currentStep: (currentStep + 1).toString(),
+      });
       setCurrentStep(currentStep - 1);
     }
   };
@@ -94,6 +107,12 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
   const handleQuestionChange = (value: string) => {
     const key = currentQuestion.id;
     setQuizState({ ...quizState, [key]: value });
+    // Track question answered
+    trackEvent(UmamiEvents.QUIZ_QUESTION_ANSWERED, {
+      question: currentQuestion.id,
+      answer: value,
+      step: (currentStep + 1).toString(),
+    });
     // No auto-advance - user must click Next button
   };
 

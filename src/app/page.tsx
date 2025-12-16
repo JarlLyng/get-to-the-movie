@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { QuizState, RecommendedMovie } from '@/types/quiz';
 import { QuizForm } from '@/components/Quiz/QuizForm';
 import { ResultList } from '@/components/Result/ResultList';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card } from '@/components/ui/card';
 import { getRecommendations } from '@/lib/tmdb-client';
+import { trackEvent, UmamiEvents } from '@/lib/umami';
 
 export default function Home() {
   const [movies, setMovies] = useState<RecommendedMovie[]>([]);
@@ -18,12 +19,27 @@ export default function Home() {
     setHasSubmitted(true);
     setMovies([]);
 
+    // Track quiz completion
+    trackEvent(UmamiEvents.QUIZ_COMPLETED, {
+      brainLevel: quizState.brainLevel,
+      energy: quizState.energy,
+      era: quizState.era,
+      mood: quizState.mood,
+    });
+
     try {
       // Use NEXT_PUBLIC_ prefix for client-side access in static export
       const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY || '25403f33a1a8dab99f0a469ddc0fa699';
       
       const recommendedMovies = await getRecommendations(quizState, apiKey);
       setMovies(recommendedMovies);
+      
+      // Track successful recommendations
+      if (recommendedMovies.length > 0) {
+        trackEvent(UmamiEvents.RECOMMENDATIONS_RECEIVED, {
+          count: recommendedMovies.length.toString(),
+        });
+      }
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       setMovies([]);
@@ -33,6 +49,7 @@ export default function Home() {
   };
 
   const handleReset = () => {
+    trackEvent(UmamiEvents.QUIZ_RESET);
     setMovies([]);
     setHasSubmitted(false);
     setIsLoading(false);
@@ -102,6 +119,7 @@ export default function Home() {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
+                  trackEvent(UmamiEvents.TRY_AGAIN_CLICKED);
                   handleReset();
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer relative z-10"
@@ -116,6 +134,7 @@ export default function Home() {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    trackEvent(UmamiEvents.GET_MORE_RECOMMENDATIONS_CLICKED);
                     handleReset();
                   }}
                   className="px-8 py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-black font-bold rounded-xl transition-all uppercase tracking-wider shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer"
