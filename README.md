@@ -361,18 +361,22 @@ NEXT_PUBLIC_TMDB_API_KEY=25403f33a1a8dab99f0a469ddc0fa699
 
 ## 10. TMDb API Keys
 
-The project uses the following TMDb keys (do **not** commit them to GitHub):
+The project requires a TMDb API key to fetch movie data.
 
-Your keys:
-- **API Read Access Token (v4)**: `eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTQwM2YzM2ExYThkYWI5OWYwYTQ2OWRkYzBmYTY5OSIsIm5iZiI6MTc2Mzc2ODExMi43MTUwMDAyLCJzdWIiOiI2OTIwZjczMDg3NjA2MGIxYzYwNTkwMzIiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.klQUrXnq6fyT6-lKKSllIn_I0MOeN1x5zAcQC8KwQHQ`
-- **API Key (v3)**: `25403f33a1a8dab99f0a469ddc0fa699`
+**Setup:**
+- For local development: Create `.env.local` with:
+  ```
+  NEXT_PUBLIC_TMDB_API_KEY=your_api_key_here
+  ```
+- For GitHub Pages: Add `TMDB_API_KEY` as a GitHub Secret (see section 9)
 
-Add to `.env.local` for local development:
-```
-NEXT_PUBLIC_TMDB_API_KEY=25403f33a1a8dab99f0a469ddc0fa699
-```
+**Getting a TMDb API Key:**
+1. Sign up at [TMDb](https://www.themoviedb.org/)
+2. Go to Settings → API
+3. Request an API key (v3)
+4. Add it to your `.env.local` file
 
 **Important:**  
-- For local development: Add to `.env.local` (not committed to git)
-- For GitHub Pages: Add `TMDB_API_KEY` as a GitHub Secret (see section 9)
-- **Note:** With static export, the API key will be visible in the client bundle. This is acceptable for TMDb read-only keys, but be aware of this limitation.
+- Never commit API keys to git
+- With static export, the API key will be visible in the client bundle. This is acceptable for TMDb read-only keys, but be aware of this limitation.
+- If your API key is exposed, rotate it immediately in TMDb settings

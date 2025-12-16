@@ -88,7 +88,7 @@ export default function Home() {
         </div>
 
         {/* Quiz or Results */}
-        {!hasSubmitted || (movies.length === 0 && !error) ? (
+        {!hasSubmitted ? (
           <div className="space-y-8 relative z-20">
             <QuizForm onSubmit={handleQuizSubmit} isLoading={isLoading} />
             
@@ -128,42 +128,82 @@ export default function Home() {
           </div>
         ) : (
           <div className="space-y-10 relative z-20">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                  Your Recommendations
-                </h2>
-                <p className="text-slate-400 mt-2">Arnold has chosen these movies for you</p>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  trackEvent(UmamiEvents.TRY_AGAIN_CLICKED);
-                  handleReset();
-                }}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer relative z-10"
-                aria-label="Reset quiz and try again"
-              >
-                Try Again
-              </button>
-            </div>
-            <ResultList movies={movies} />
-            {movies.length > 0 && (
-              <div className="text-center pt-8 relative z-10">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    trackEvent(UmamiEvents.GET_MORE_RECOMMENDATIONS_CLICKED);
-                    handleReset();
-                  }}
-                  className="px-8 py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-black font-bold rounded-xl transition-all uppercase tracking-wider shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer"
-                  aria-label="Get more movie recommendations"
-                >
-                  Get More Recommendations
-                </button>
-              </div>
+            {error ? (
+              <Card className="p-8 border-red-500/50 bg-red-950/20 backdrop-blur-sm">
+                <div className="text-center space-y-4">
+                  <h2 className="text-2xl font-bold text-red-400">Error</h2>
+                  <p className="text-red-300">{error}</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      trackEvent(UmamiEvents.TRY_AGAIN_CLICKED);
+                      handleReset();
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer mt-4"
+                    aria-label="Reset quiz and try again"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </Card>
+            ) : movies.length > 0 ? (
+              <>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                      Your Recommendations
+                    </h2>
+                    <p className="text-slate-400 mt-2">Arnold has chosen these movies for you</p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      trackEvent(UmamiEvents.TRY_AGAIN_CLICKED);
+                      handleReset();
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer relative z-10"
+                    aria-label="Reset quiz and try again"
+                  >
+                    Try Again
+                  </button>
+                </div>
+                <ResultList movies={movies} />
+                <div className="text-center pt-8 relative z-10">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      trackEvent(UmamiEvents.GET_MORE_RECOMMENDATIONS_CLICKED);
+                      handleReset();
+                    }}
+                    className="px-8 py-4 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-black font-bold rounded-xl transition-all uppercase tracking-wider shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer"
+                    aria-label="Get more movie recommendations"
+                  >
+                    Get More Recommendations
+                  </button>
+                </div>
+              </>
+            ) : (
+              <Card className="p-8 border-slate-800 bg-slate-900/50 backdrop-blur-sm">
+                <div className="text-center space-y-4">
+                  <h2 className="text-2xl font-bold text-slate-300">No movies found</h2>
+                  <p className="text-slate-400">Try adjusting your preferences and try again.</p>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      trackEvent(UmamiEvents.TRY_AGAIN_CLICKED);
+                      handleReset();
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold rounded-lg transition-all text-sm uppercase tracking-wider shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 cursor-pointer mt-4"
+                    aria-label="Reset quiz and try again"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </Card>
             )}
           </div>
         )}

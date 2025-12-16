@@ -2,7 +2,6 @@ import type { QuizState, RecommendedMovie } from '@/types/quiz';
 import { getArnoldComment } from './arnold-comments';
 
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
 // Arnold Schwarzenegger's person ID on TMDb
 const ARNOLD_PERSON_ID = 1100;
@@ -93,24 +92,27 @@ async function fetchMoviesFromTMDB(params: URLSearchParams): Promise<TMDBMovie[]
   }
 }
 
-async function fetchArnoldMovies(apiKey: string): Promise<TMDBMovie[]> {
-  // Try cast-based search first
-  const params = new URLSearchParams();
-  params.set('api_key', apiKey);
+async function fetchArnoldMovies(apiKey: string, quiz: QuizState): Promise<TMDBMovie[]> {
+  // Use buildTMDBQuery to respect all quiz parameters (era, mood/genre, etc.)
+  const params = buildTMDBQuery(quiz, apiKey);
+  
+  // Ensure we always filter by Arnold
   params.set('with_cast', ARNOLD_PERSON_ID.toString());
-  params.set('sort_by', 'popularity.desc');
   
   const movies = await fetchMoviesFromTMDB(params);
   
   if (movies.length > 0) {
-    return movies.slice(0, 10); // Return top 10
+    return movies;
   }
   
-  // Fallback: fetch specific Arnold movies
-  const moviePromises = ARNOLD_MOVIE_IDS.slice(0, 10).map(async (id) => {
+  // Fallback: fetch specific Arnold movies and filter by quiz preferences
+  const moviePromises = ARNOLD_MOVIE_IDS.map(async (id) => {
     try {
+      const fallbackParams = new URLSearchParams();
+      fallbackParams.set('api_key', apiKey);
+      fallbackParams.set('language', 'en-US');
       const response = await fetch(
-        `${TMDB_BASE_URL}/movie/${id}?api_key=${apiKey}&language=en-US`
+        `${TMDB_BASE_URL}/movie/${id}?${fallbackParams.toString()}`
       );
       if (response.ok) {
         return await response.json();
@@ -122,7 +124,28 @@ async function fetchArnoldMovies(apiKey: string): Promise<TMDBMovie[]> {
   });
   
   const results = await Promise.all(moviePromises);
-  return results.filter((movie): movie is TMDBMovie => movie !== null);
+  const fallbackMovies = results.filter((movie): movie is TMDBMovie => movie !== null);
+  
+  // Apply era filtering to fallback movies
+  let filtered = fallbackMovies;
+  if (quiz.era === '80s') {
+    filtered = fallbackMovies.filter((movie) => {
+      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
+      return year >= 1980 && year <= 1989;
+    });
+  } else if (quiz.era === '90s') {
+    filtered = fallbackMovies.filter((movie) => {
+      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
+      return year >= 1990 && year <= 1999;
+    });
+  } else if (quiz.era === 'modern') {
+    filtered = fallbackMovies.filter((movie) => {
+      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
+      return year >= 2000;
+    });
+  }
+  
+  return filtered;
 }
 
 function selectMovies(movies: TMDBMovie[], quiz: QuizState, count: number = 3): TMDBMovie[] {
@@ -188,30 +211,11 @@ export async function getRecommendations(
     throw new Error('TMDb API key not provided');
   }
 
-  // Always fetch Arnold movies
-  const movies = await fetchArnoldMovies(apiKey);
+  // Fetch Arnold movies with quiz filters applied (era, mood/genre via buildTMDBQuery)
+  const movies = await fetchArnoldMovies(apiKey, quiz);
 
-  // Apply era filtering if specified
-  let filteredMovies = movies;
-  if (quiz.era === '80s') {
-    filteredMovies = movies.filter((movie) => {
-      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
-      return year >= 1980 && year <= 1989;
-    });
-  } else if (quiz.era === '90s') {
-    filteredMovies = movies.filter((movie) => {
-      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
-      return year >= 1990 && year <= 1999;
-    });
-  } else if (quiz.era === 'modern') {
-    filteredMovies = movies.filter((movie) => {
-      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
-      return year >= 2000;
-    });
-  }
-
-  // Select 1-3 movies based on preferences
-  const selectedMovies = selectMovies(filteredMovies, quiz, 3);
+  // Select 1-3 movies based on preferences (energy, brain level)
+  const selectedMovies = selectMovies(movies, quiz, 3);
   
   if (selectedMovies.length === 0) {
     return [];

@@ -1,12 +1,12 @@
 export type BrainLevel = 'low' | 'medium' | 'high';
-export type ArnoldLevel = 'none' | 'medium' | 'full';
+export type ArnoldLevel = 'full'; // Only Arnold movies are supported
 export type EnergyLevel = 'low' | 'medium' | 'high';
 export type Era = '80s' | '90s' | 'modern' | 'any';
 export type Mood = 'funny' | 'action' | 'dark';
 
 export type QuizState = {
   brainLevel: BrainLevel;
-  arnoldLevel: ArnoldLevel;
+  arnoldLevel: ArnoldLevel; // Always 'full' - only Arnold movies
   energy: EnergyLevel;
   era: Era;
   mood: Mood;
