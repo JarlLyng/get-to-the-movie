@@ -120,19 +120,19 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
     <form onSubmit={handleSubmit} className="space-y-10 relative z-10" noValidate>
       {/* Progress Indicator */}
       <div className="space-y-2">
-        <div className="flex justify-between items-center text-sm text-slate-400">
+        <div className="flex justify-between items-center text-sm text-muted-foreground">
           <span>Question {currentStep + 1} of {questions.length}</span>
           <span>{Math.round(((currentStep + 1) / questions.length) * 100)}%</span>
         </div>
-        <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
           <div
-            className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 h-full transition-all duration-300 ease-out"
+            className="bg-primary h-full transition-all duration-300 ease-out"
             style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
           />
         </div>
       </div>
 
-      <Card className="p-8 md:p-10 space-y-8 border-slate-800 bg-slate-900/50 backdrop-blur-sm shadow-2xl min-h-[400px] flex flex-col">
+      <Card className="p-8 md:p-10 space-y-8 border-border bg-card backdrop-blur-sm shadow-2xl min-h-[400px] flex flex-col">
         <div className="flex-1">
           {currentQuestion.id === 'brainLevel' && (
             <QuizQuestion<BrainLevel>
@@ -169,13 +169,13 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between items-center pt-6 border-t border-slate-800">
+        <div className="flex justify-between items-center pt-6 border-t border-border">
           <Button
             type="button"
             variant="outline"
             onClick={handlePrevious}
             disabled={isFirstStep || isLoading}
-            className="px-6 py-3 border-2 border-slate-600 bg-slate-800/50 text-white hover:bg-slate-700 hover:border-slate-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-all"
+            className="px-6 py-3 font-semibold transition-all"
           >
             ← Previous
           </Button>
@@ -185,7 +185,7 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
               type="submit"
               size="lg"
               disabled={isLoading || !quizState.mood}
-              className="text-lg px-10 py-7 font-extrabold uppercase tracking-wider bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 text-black shadow-lg shadow-orange-500/50 hover:shadow-xl hover:shadow-orange-500/50 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
+              className="text-lg px-10 py-7 font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/50 hover:shadow-xl hover:shadow-primary/50 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
             >
               {isLoading ? 'Arnold is thinking...' : 'PUMP MY MOVIE!'}
             </Button>
@@ -194,7 +194,7 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
               type="button"
               onClick={handleNext}
               disabled={isLoading || !quizState[currentQuestion.id]}
-              className="px-8 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </Button>

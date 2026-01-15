@@ -11,10 +11,10 @@ export function ResultList({ movies }: ResultListProps) {
   if (movies.length === 0) {
     return (
       <div className="text-center py-16">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-800 border border-slate-700 mb-4">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-muted border border-border mb-4">
           <span className="text-4xl">🎬</span>
         </div>
-        <p className="text-xl text-slate-400 font-medium">
+        <p className="text-xl text-muted-foreground font-semibold">
           No movies found. Try again with different settings!
         </p>
       </div>
