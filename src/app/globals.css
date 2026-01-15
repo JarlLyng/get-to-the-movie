@@ -3,113 +3,120 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/**
+ * IAMJARL Design System Tokens
+ * Source: https://jarllyng.github.io/iamjarl-design/tokens.json
+ */
+
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* IAMJARL Design Tokens - Colors */
+  --color-primary: var(--iamjarl-primary);
+  --color-primary-foreground: var(--iamjarl-text-inverse);
+  --color-text-primary: var(--iamjarl-text-primary);
+  --color-text-secondary: var(--iamjarl-text-secondary);
+  --color-text-tertiary: var(--iamjarl-text-tertiary);
+  --color-text-inverse: var(--iamjarl-text-inverse);
+  --color-background-app: var(--iamjarl-background-app);
+  --color-background-muted: var(--iamjarl-background-muted);
+  --color-background-card: var(--iamjarl-background-card);
+  --color-surface-default: var(--iamjarl-surface-default);
+  --color-surface-raised: var(--iamjarl-surface-raised);
+  --color-border-subtle: var(--iamjarl-border-subtle);
+  --color-border-default: var(--iamjarl-border-default);
+  --color-success: var(--iamjarl-success);
+  --color-warning: var(--iamjarl-warning);
+  --color-error: var(--iamjarl-error);
+  
+  /* Legacy shadcn/ui compatibility (mapped to IAMJARL tokens) */
+  --color-background: var(--iamjarl-background-app);
+  --color-foreground: var(--iamjarl-text-primary);
+  --color-card: var(--iamjarl-background-card);
+  --color-card-foreground: var(--iamjarl-text-primary);
+  --color-popover: var(--iamjarl-surface-default);
+  --color-popover-foreground: var(--iamjarl-text-primary);
+  --color-primary-foreground: var(--iamjarl-text-inverse);
+  --color-secondary: var(--iamjarl-background-muted);
+  --color-secondary-foreground: var(--iamjarl-text-primary);
+  --color-muted: var(--iamjarl-background-muted);
+  --color-muted-foreground: var(--iamjarl-text-secondary);
+  --color-accent: var(--iamjarl-background-muted);
+  --color-accent-foreground: var(--iamjarl-text-primary);
+  --color-destructive: var(--iamjarl-error);
+  --color-border: var(--iamjarl-border-default);
+  --color-input: var(--iamjarl-border-subtle);
+  --color-ring: var(--iamjarl-primary);
+  
+  /* Typography */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  
+  /* Radius (IAMJARL tokens) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  
+  /* Legacy compatibility */
+  --radius: var(--radius-md);
 }
 
+/* Light Mode (Default) */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Primary */
+  --iamjarl-primary: #00FF7B;
+  
+  /* Text */
+  --iamjarl-text-primary: #000000;
+  --iamjarl-text-secondary: rgba(0, 0, 0, 0.70);
+  --iamjarl-text-tertiary: rgba(0, 0, 0, 0.55);
+  --iamjarl-text-inverse: #FFFFFF;
+  
+  /* Background */
+  --iamjarl-background-app: #FFFFFF;
+  --iamjarl-background-muted: rgba(0, 0, 0, 0.04);
+  --iamjarl-background-card: rgba(0, 0, 0, 0.04);
+  
+  /* Surface */
+  --iamjarl-surface-default: #FFFFFF;
+  --iamjarl-surface-raised: rgba(0, 0, 0, 0.02);
+  
+  /* Border */
+  --iamjarl-border-subtle: rgba(0, 0, 0, 0.10);
+  --iamjarl-border-default: rgba(0, 0, 0, 0.16);
+  
+  /* States */
+  --iamjarl-success: #4CAF50;
+  --iamjarl-warning: #FF6B35;
+  --iamjarl-error: #FF3B30;
 }
 
+/* Dark Mode */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Primary */
+  --iamjarl-primary: #D0FF00;
+  
+  /* Text */
+  --iamjarl-text-primary: #FFFFFF;
+  --iamjarl-text-secondary: rgba(255, 255, 255, 0.75);
+  --iamjarl-text-tertiary: rgba(255, 255, 255, 0.60);
+  --iamjarl-text-inverse: #000000;
+  
+  /* Background */
+  --iamjarl-background-app: #000000;
+  --iamjarl-background-muted: rgba(255, 255, 255, 0.05);
+  --iamjarl-background-card: rgba(255, 255, 255, 0.05);
+  
+  /* Surface */
+  --iamjarl-surface-default: #000000;
+  --iamjarl-surface-raised: rgba(255, 255, 255, 0.03);
+  
+  /* Border */
+  --iamjarl-border-subtle: rgba(255, 255, 255, 0.12);
+  --iamjarl-border-default: rgba(255, 255, 255, 0.18);
+  
+  /* States (same in both modes) */
+  --iamjarl-success: #4CAF50;
+  --iamjarl-warning: #FF6B35;
+  --iamjarl-error: #FF3B30;
 }
 
 @layer base {
