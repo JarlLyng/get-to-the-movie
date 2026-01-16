@@ -1,9 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_PATH 
-    ? `https://jarllyng.github.io${process.env.NEXT_PUBLIC_BASE_PATH}`
-    : 'https://jarllyng.github.io/get-to-the-movie';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
 
   return [
     {

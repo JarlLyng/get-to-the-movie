@@ -67,9 +67,7 @@ export default function Home() {
     setError(null);
   };
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_PATH 
-    ? `https://jarllyng.github.io${process.env.NEXT_PUBLIC_BASE_PATH}`
-    : 'https://jarllyng.github.io/get-to-the-movie';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
 
   // Structured data for SEO
   const structuredData = {

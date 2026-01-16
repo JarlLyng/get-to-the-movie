@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_PATH 
-  ? `https://jarllyng.github.io${process.env.NEXT_PUBLIC_BASE_PATH}`
-  : 'https://jarllyng.github.io/get-to-the-movie';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -82,15 +80,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <head>
-        {/* Preconnect to external domains for performance */}
-        <link rel="preconnect" href="https://api.themoviedb.org" />
-        <link rel="preconnect" href="https://image.tmdb.org" />
-        <link rel="preconnect" href="https://umami-iamjarl.vercel.app" />
-        {/* Theme color for mobile browsers */}
-        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-        <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
-      </head>
       <body className="antialiased">
         {children}
         <Script
