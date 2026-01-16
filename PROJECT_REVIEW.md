@@ -1,18 +1,35 @@
-# Projektreview – Get to the Movie!
+# Projektreview – Get to the Movie
 
-## Fund (ordnet efter alvor)
-1. **API-nøgler offentliggjort** – `README.md:330-378` indeholder både TMDb v3 API-nøgle og v4 bearer-token. De er allerede i git-historikken og kan misbruges til misbrug/kvoteforbrug. *Anbefaling:* Fjern nøglerne fra repoet, erstat med placeholders, og rotér både v3- og v4-nøglerne i TMDb samt GitHub Actions-secrets.
-2. **Quiz-svar påvirker ikke reelle anbefalinger** – `src/lib/tmdb-client.ts:32-226` ignorerer mood/genre-filtrering og Arnold-niveau: `buildTMDBQuery` dækker genre/era, men bliver aldrig brugt, og `fetchArnoldMovies` henter blot top 10 Arnold-film uanset svar. Resultatet er næsten statiske anbefalinger og brud på “kun Arnold-film + humørfiltrering”-kravet. *Anbefaling:* Brug `buildTMDBQuery` (eller tilsvarende) til at bygge `discover`-kaldet med genre, era, include_adult=false og language, og koble quizfelter direkte til parametre/scorelogik.
-3. **Fejltilstand skjules efter submit** – `src/app/page.tsx:91-169` viser resultatlayout, selv når `error` er sat (f.eks. manglende API-key), så brugeren ender med generisk “No movies found” i `ResultList` i stedet for den faktiske fejl. *Anbefaling:* Vise `error`-kortet også i resultatvisningen eller short-circuite renderen, så fejlmeddelelser forbliver synlige efter submit.
-4. **Typer vs. UI om Arnold-niveau** – `src/types/quiz.ts:1-10` giver mulighed for `'none' | 'medium' | 'full'`, men `QuizForm` sætter altid `'full'` og UI’et har ingen valg. Det gør data/typer misvisende og kan forvirre fremtidige ændringer. *Anbefaling:* Stram `ArnoldLevel` til den reelt understøttede værdi eller eksponer en kontrolleret UI-indstilling hvis flere niveauer er ønsket.
-5. **Død kode og ufuldstændige TMDb-parametre** – `src/lib/tmdb-client.ts:32-77` (ubrugt query-builder) og `TMDB_IMAGE_BASE_URL` er ikke i brug. `fetchArnoldMovies` sætter heller ikke `include_adult` eller `language`, så resultatet kan variere uforudsigeligt. *Anbefaling:* Fjern ubrugte konstanter/funktioner eller tag dem i brug, og tilføj de manglende TMDb-parametre for stabile, sikre resultater.
+## Fund (prioriteret) - ✅ ALLE LØST
 
-## Åbne spørgsmål
-- Skal anbefalingslogikken kunne returnere ikke-Arnold-film (jf. `ArnoldLevel`) eller er “kun Arnold” et hårdt krav for alle miljøer?
-- Skal Umami-scriptet altid loades (prod + preview), eller bør det være konfigurerbart via env for at undgå tracking i lokale builds/tests?
-- Hvad er forventet fallback, hvis TMDb er utilgængelig? (Statisk cache af Arnold-film, eller bare fejlbesked?)
+1. ✅ **Kritisk – API-nøgle offentliggjort i README**: ~~Den konkrete TMDb v3 API-key står i dokumentationen og vil blive indekseret af søgemaskiner. Det giver kvotemisbrug og kan føre til spærring.~~  
+   **Status:** Fjernet fra README.md og erstattet med placeholders.  
+   **Sted:** `README.md:344`, `README.md:355`
 
-## Anbefalede næste skridt
-- Rotér og fjern de eksponerede TMDb-nøgler som første handling.
-- Refaktor `tmdb-client` til at respektere alle quizfelter og tilføj tests for filtrering/scorelogik.
-- Opdater fejlhåndtering i `page.tsx`, så brugeren ser konkrete fejl og kan prøve igen uden at miste kontekst.
+2. ✅ **Høj – Fejl skjules som "No movies found"**: ~~`fetchMoviesFromTMDB` fanger alle fejl og returnerer tomt array. Det betyder, at 401/429/netværksfejl bliver til "ingen film", selv om der er en rigtig fejl. UI'et kan derfor ikke skelne mellem "ingen match" og "API-fejl".~~  
+   **Status:** Fejl propageres nu korrekt op til UI. `fetchMoviesFromTMDB` kaster fejl i stedet for at returnere tomt array. `fetchArnoldMovies` håndterer fejl og prøver fallback før den kaster fejl.  
+   **Sted:** `src/lib/tmdb-client.ts:78-93`, `src/lib/tmdb-client.ts:95-149`
+
+3. ✅ **Medium – Energi-præference kan blive ignoreret**: ~~Når `brainLevel` er `low`, sorteres der igen efter popularitet, hvilket overskriver energisorteringen. Brugeren svarer på energi, men den påvirker ikke resultatet i de tilfælde.~~  
+   **Status:** Implementeret kombineret scoring-system hvor både energy og brainLevel påvirker resultatet. Begge præferencer vejes sammen i en samlet score.  
+   **Sted:** `src/lib/tmdb-client.ts:151-185`
+
+4. ✅ **Medium – Spørgsmålslabel er ikke knyttet til radiogruppen**: ~~Spørgsmålet renderes som en `Label` uden relation til radiogruppen, hvilket gør skærmlæser-kontekst svag. `RadioGroupItem` er desuden gjort ikke-klikbar via `pointer-events-none`, hvilket kan give uventet fokus/klik-adfærd.~~  
+   **Status:** Tilføjet `fieldset` og `legend` med korrekt `id` og `aria-labelledby` relation. Fjernet `pointer-events-none` fra `RadioGroupItem` så de er klikbare.  
+   **Sted:** `src/components/Quiz/QuizQuestion.tsx:19-57`
+
+5. ✅ **Lav – Fallback-logosik ignorerer mood**: ~~Når discover-kaldet giver 0 resultater, filtreres fallback kun på era. Det betyder, at "funny/dark/action" ikke længere påvirker resultaterne.~~  
+   **Status:** Tilføjet mood-baseret sortering i fallback-logikken. Bemærk: Fallback bruger individuelle movie-endpoints der ikke returnerer genre_ids, så vi kan ikke filtrere direkte, men vi prioriterer baseret på mood.  
+   **Sted:** `src/lib/tmdb-client.ts:129-149`
+
+## Anbefalinger
+- Fjern API-nøglen fra `README.md`, rotér den i TMDb, og brug placeholders i dokumentationen.
+- Propager API-fejl op til UI’et (f.eks. returnér en error-type eller kast fejl) så brugeren får en korrekt besked.
+- Kombinér energi + brain-level i én score/sekundær sortering, så begge svar påvirker anbefalingerne.
+- Tilføj `fieldset` + `legend` eller `aria-labelledby` til radiogruppen og lad de faktiske radio-elementer være klikbare.
+- Anvend mood-filter i fallback (fx genre-match) eller vis en tydelig “fallback uden mood-filter”-besked.
+
+## Åbne spørgsmål / antagelser
+- Skal analytics (Umami) være slået fra i local/preview builds?
+- Er “kun Arnold”-reglen et hårdt krav i alle miljøer?
+- Hvilket forventet niveau af testdækning ønsker I for anbefalingslogik og fejlscenarier?

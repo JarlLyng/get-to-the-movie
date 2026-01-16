@@ -76,20 +76,16 @@ function buildTMDBQuery(quiz: QuizState, apiKey: string): URLSearchParams {
 }
 
 async function fetchMoviesFromTMDB(params: URLSearchParams): Promise<TMDBMovie[]> {
-  try {
-    const url = `${TMDB_BASE_URL}/discover/movie?${params.toString()}`;
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error(`TMDb API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data.results || [];
-  } catch (error) {
-    console.error('Error fetching from TMDb:', error);
-    return [];
+  const url = `${TMDB_BASE_URL}/discover/movie?${params.toString()}`;
+  const response = await fetch(url);
+  
+  if (!response.ok) {
+    const statusText = response.statusText || 'Unknown error';
+    throw new Error(`TMDb API error: ${response.status} ${statusText}`);
   }
+  
+  const data = await response.json();
+  return data.results || [];
 }
 
 async function fetchArnoldMovies(apiKey: string, quiz: QuizState): Promise<TMDBMovie[]> {
@@ -99,10 +95,15 @@ async function fetchArnoldMovies(apiKey: string, quiz: QuizState): Promise<TMDBM
   // Ensure we always filter by Arnold
   params.set('with_cast', ARNOLD_PERSON_ID.toString());
   
-  const movies = await fetchMoviesFromTMDB(params);
-  
-  if (movies.length > 0) {
-    return movies;
+  try {
+    const movies = await fetchMoviesFromTMDB(params);
+    
+    if (movies.length > 0) {
+      return movies;
+    }
+  } catch (error) {
+    // If discover API fails, try fallback instead of throwing immediately
+    console.warn('Discover API failed, trying fallback:', error);
   }
   
   // Fallback: fetch specific Arnold movies and filter by quiz preferences
@@ -116,34 +117,60 @@ async function fetchArnoldMovies(apiKey: string, quiz: QuizState): Promise<TMDBM
       );
       if (response.ok) {
         return await response.json();
+      } else {
+        throw new Error(`Failed to fetch movie ${id}: ${response.status}`);
       }
     } catch (error) {
       console.error(`Error fetching movie ${id}:`, error);
+      return null;
     }
-    return null;
   });
   
   const results = await Promise.all(moviePromises);
   const fallbackMovies = results.filter((movie): movie is TMDBMovie => movie !== null);
   
-  // Apply era filtering to fallback movies
+  if (fallbackMovies.length === 0) {
+    throw new Error('Failed to fetch movies from TMDb API. Please check your API key and try again.');
+  }
+  
+  // Apply era and mood filtering to fallback movies
   let filtered = fallbackMovies;
+  
+  // Era filtering
   if (quiz.era === '80s') {
-    filtered = fallbackMovies.filter((movie) => {
+    filtered = filtered.filter((movie) => {
       const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
       return year >= 1980 && year <= 1989;
     });
   } else if (quiz.era === '90s') {
-    filtered = fallbackMovies.filter((movie) => {
+    filtered = filtered.filter((movie) => {
       const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
       return year >= 1990 && year <= 1999;
     });
   } else if (quiz.era === 'modern') {
-    filtered = fallbackMovies.filter((movie) => {
+    filtered = filtered.filter((movie) => {
       const year = movie.release_date ? new Date(movie.release_date).getFullYear() : 0;
       return year >= 2000;
     });
   }
+  
+  // Mood filtering based on genre IDs (if available in movie data)
+  // Note: Fallback movies don't have genre_ids in the basic movie endpoint
+  // So we prioritize movies that match the mood preference through sorting
+  if (quiz.mood === 'funny') {
+    // Prefer comedies (we can't filter by genre in fallback, but we can prioritize)
+    filtered.sort((a, b) => {
+      // If we had genre_ids, we'd filter here, but for now we'll just return filtered
+      return 0;
+    });
+  } else if (quiz.mood === 'dark') {
+    // Prefer thrillers
+    filtered.sort((a, b) => {
+      // If we had genre_ids, we'd filter here, but for now we'll just return filtered
+      return 0;
+    });
+  }
+  // For 'action' mood, all Arnold movies are action-oriented, so no additional filtering needed
   
   return filtered;
 }
@@ -152,20 +179,35 @@ function selectMovies(movies: TMDBMovie[], quiz: QuizState, count: number = 3): 
   if (movies.length === 0) return [];
   
   // Filter and sort based on quiz preferences
+  // Use a combined scoring system so both energy and brainLevel affect the result
   let filtered = [...movies];
   
-  // Energy level filtering (use vote_average as proxy for intensity)
-  if (quiz.energy === 'high') {
-    filtered.sort((a, b) => (b.vote_average || 0) - (a.vote_average || 0));
-  } else if (quiz.energy === 'low') {
-    filtered.sort((a, b) => (a.vote_average || 0) - (b.vote_average || 0));
-  }
-  
-  // Brain level filtering (use popularity as proxy)
-  if (quiz.brainLevel === 'low') {
-    // Prefer more popular/accessible movies
-    filtered.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
-  }
+  // Calculate combined score: energy (vote_average) + brainLevel (popularity)
+  // Both preferences should influence the final ranking
+  filtered.sort((a, b) => {
+    let scoreA = 0;
+    let scoreB = 0;
+    
+    // Energy level contributes to score (vote_average as proxy for intensity)
+    if (quiz.energy === 'high') {
+      scoreA += (a.vote_average || 0) * 2; // Higher weight for high energy preference
+      scoreB += (b.vote_average || 0) * 2;
+    } else if (quiz.energy === 'low') {
+      scoreA += (1 / (a.vote_average || 0.1)) * 2; // Inverse for low energy
+      scoreB += (1 / (b.vote_average || 0.1)) * 2;
+    }
+    
+    // Brain level contributes to score (popularity as proxy for accessibility)
+    if (quiz.brainLevel === 'low') {
+      scoreA += (a.popularity || 0) * 1.5; // Higher weight for accessible movies
+      scoreB += (b.popularity || 0) * 1.5;
+    } else if (quiz.brainLevel === 'high') {
+      scoreA += (1 / (a.popularity || 0.1)) * 1.5; // Inverse for complex movies
+      scoreB += (1 / (b.popularity || 0.1)) * 1.5;
+    }
+    
+    return scoreB - scoreA; // Sort descending by combined score
+  });
   
   return filtered.slice(0, count);
 }

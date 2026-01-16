@@ -16,12 +16,20 @@ export function QuizQuestion<T extends string>({
   onChange,
   options,
 }: QuizQuestionProps<T>) {
+  const questionId = `question-${options[0]?.value || 'default'}`;
+  
   return (
     <div className="space-y-6">
-      <Label className="text-2xl md:text-3xl font-bold text-foreground block mb-6 text-center">
-        {question}
-      </Label>
-      <RadioGroup value={value || ''} onValueChange={onChange} className="space-y-4">
+      <fieldset>
+        <legend id={questionId} className="text-2xl md:text-3xl font-bold text-foreground block mb-6 text-center">
+          {question}
+        </legend>
+        <RadioGroup 
+          value={value || ''} 
+          onValueChange={onChange} 
+          className="space-y-4"
+          aria-labelledby={questionId}
+        >
         {options.map((option) => (
           <div 
             key={option.value} 
@@ -32,17 +40,18 @@ export function QuizQuestion<T extends string>({
             <RadioGroupItem 
               value={option.value} 
               id={option.value}
-              className="border-border group-hover:border-primary data-[state=checked]:border-primary data-[state=checked]:bg-primary shrink-0 size-5 pointer-events-none"
+              className="border-border group-hover:border-primary data-[state=checked]:border-primary data-[state=checked]:bg-primary shrink-0 size-5"
             />
             <Label
               htmlFor={option.value}
-              className="text-lg font-medium text-foreground cursor-pointer flex-1 leading-relaxed group-hover:text-primary transition-colors pointer-events-none"
+              className="text-lg font-medium text-foreground cursor-pointer flex-1 leading-relaxed group-hover:text-primary transition-colors"
             >
               {option.label}
             </Label>
           </div>
         ))}
-      </RadioGroup>
+        </RadioGroup>
+      </fieldset>
     </div>
   );
 }

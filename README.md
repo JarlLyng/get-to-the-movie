@@ -341,7 +341,7 @@ This project is configured for deployment on **GitHub Pages**.
 For GitHub Actions to build the site, add the TMDb API key as a GitHub Secret:
 
 1. Go to your repository → Settings → Secrets and variables → Actions
-2. Add a new secret named `TMDB_API_KEY` with value: `25403f33a1a8dab99f0a469ddc0fa699`
+2. Add a new secret named `TMDB_API_KEY` with your TMDb API key value
 
 ### Hosting:
 The site will be publicly hosted at:
@@ -352,7 +352,7 @@ https://jarllyng.github.io/get-to-the-movie
 ### Local Development:
 For local development, create `.env.local` with:
 ```
-NEXT_PUBLIC_TMDB_API_KEY=25403f33a1a8dab99f0a469ddc0fa699
+NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key_here
 ```
 
 **Note:** With static export, the API key will be included in the client bundle. This is acceptable for TMDb read-only API keys, but be aware that the key will be visible in the browser.

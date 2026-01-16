@@ -65,3 +65,31 @@
 - All linter errors are warnings, not actual errors
 - Project builds successfully with no TypeScript errors
 
+## 🎨 Recent Updates
+
+### IAMJARL Design System Integration
+- ✅ Design tokens implemented from IAMJARL Design System
+- ✅ All hardcoded colors replaced with design tokens
+- ✅ Typography updated to use system-ui (platform native)
+- ✅ Icons migrated from lucide-react to phosphor-react
+- ✅ Dark mode enabled by default
+- ✅ Light and dark mode support via CSS variables
+- ✅ Consistent spacing and radius using design tokens
+
+### Dark Mode
+- ✅ Dark mode enabled by default (`className="dark"` on html element)
+- ✅ Uses IAMJARL dark mode tokens:
+  - Primary: #D0FF00 (lime green)
+  - Background: #000000 (black)
+  - Text: #FFFFFF (white)
+  - All components properly styled for dark mode
+
+## ✅ Pre-Review Checklist
+
+- ✅ No linter errors
+- ✅ Build succeeds
+- ✅ TypeScript compiles without errors
+- ✅ All dependencies up to date
+- ✅ Dark mode working correctly
+- ✅ Design system tokens properly implemented
+- ✅ No TODO/FIXME comments in code
