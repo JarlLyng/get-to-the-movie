@@ -350,12 +350,22 @@ https://jarllyng.github.io/get-to-the-movie
 ```
 
 ### Local Development:
-For local development, create `.env.local` with:
-```
-NEXT_PUBLIC_TMDB_API_KEY=your_tmdb_api_key_here
-```
+1. Copy `.env.example` to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
 
-**Note:** With static export, the API key will be included in the client bundle. This is acceptable for TMDb read-only API keys, but be aware that the key will be visible in the browser.
+2. Edit `.env.local` and add your TMDb API key:
+   ```
+   NEXT_PUBLIC_TMDB_API_KEY=your_actual_tmdb_api_key_here
+   ```
+
+**⚠️ Important Security Note:**  
+With static export, the `NEXT_PUBLIC_TMDB_API_KEY` will be included in the client-side JavaScript bundle and will be visible in the browser. This is acceptable for TMDb read-only API keys, but:
+- Never commit `.env.local` to git (it's in `.gitignore`)
+- Consider rate limiting on your TMDb API key
+- Monitor your API usage in TMDb dashboard
+- Rotate your API key if it's exposed or compromised
 
 ---
 
