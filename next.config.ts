@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const isProduction = process.env.NODE_ENV === 'production';
+// Use static export when NEXT_PUBLIC_BASE_PATH is set (even if empty string for custom domain)
 const isExport = process.env.NEXT_PUBLIC_BASE_PATH !== undefined;
 
 const nextConfig: NextConfig = {
-  // Only use static export when building for GitHub Pages
+  // Use static export for GitHub Pages (works with both subpath and custom domain)
   ...(isExport && { output: 'export' }),
-  // Only use basePath when building for production (GitHub Pages)
-  // In dev mode, basePath is empty so app works on localhost:3000
+  // basePath is empty for custom domain, or /get-to-the-movie for GitHub Pages subpath
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   images: {
     ...(isExport && { unoptimized: true }), // Required for static export
