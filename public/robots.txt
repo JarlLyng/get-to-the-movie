@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jarllyng.github.io/get-to-the-movie/sitemap.xml

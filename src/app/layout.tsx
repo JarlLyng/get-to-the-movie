@@ -2,9 +2,66 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_PATH 
+  ? `https://jarllyng.github.io${process.env.NEXT_PUBLIC_BASE_PATH}`
+  : 'https://jarllyng.github.io/get-to-the-movie';
+
 export const metadata: Metadata = {
-  title: "Get to the Movie!",
-  description: "Arnold Schwarzenegger-inspired movie recommendation app. Answer the quiz questions and get recommended perfect Arnold movies!",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "Get to the Movie! - Arnold Schwarzenegger Movie Recommendations",
+    template: "%s | Get to the Movie!"
+  },
+  description: "Arnold Schwarzenegger-inspired movie recommendation app. Answer fun quiz questions and get recommended perfect Arnold movies with over-the-top Arnold-style commentary!",
+  keywords: [
+    "Arnold Schwarzenegger",
+    "movie recommendations",
+    "action movies",
+    "movie quiz",
+    "Arnold movies",
+    "movie finder",
+    "entertainment"
+  ],
+  authors: [{ name: "IAMJARL" }],
+  creator: "IAMJARL",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: baseUrl,
+    siteName: "Get to the Movie!",
+    title: "Get to the Movie! - Arnold Schwarzenegger Movie Recommendations",
+    description: "Answer fun quiz questions and get recommended perfect Arnold movies with over-the-top Arnold-style commentary!",
+    images: [
+      {
+        url: `${baseUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Get to the Movie! - Arnold Schwarzenegger Movie Recommendations",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Get to the Movie! - Arnold Schwarzenegger Movie Recommendations",
+    description: "Answer fun quiz questions and get recommended perfect Arnold movies!",
+    creator: "@iamjarl",
+    images: [`${baseUrl}/og-image.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    // Add Google Search Console verification if needed
+    // google: "your-google-verification-code",
+  },
 };
 
 export default function RootLayout({

@@ -67,15 +67,44 @@ export default function Home() {
     setError(null);
   };
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_PATH 
+    ? `https://jarllyng.github.io${process.env.NEXT_PUBLIC_BASE_PATH}`
+    : 'https://jarllyng.github.io/get-to-the-movie';
+
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Get to the Movie!",
+    "description": "Arnold Schwarzenegger-inspired movie recommendation app. Answer quiz questions and get recommended perfect Arnold movies!",
+    "url": baseUrl,
+    "applicationCategory": "EntertainmentApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "creator": {
+      "@type": "Organization",
+      "name": "IAMJARL"
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <main className="min-h-screen bg-background text-foreground relative overflow-hidden">
       {/* Grid pattern background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none"></div>
       <div className="relative container mx-auto px-4 py-16 max-w-5xl z-10">
         {/* Hero Section */}
-        <div className="text-center mb-16 space-y-6">
+        <header className="text-center mb-16 space-y-6">
           <div className="inline-flex items-center justify-center">
             <div className="absolute inset-0 bg-primary blur-2xl opacity-30 animate-pulse"></div>
             <h1 className="relative text-6xl md:text-7xl font-bold mb-2 text-primary tracking-tight">
@@ -85,7 +114,7 @@ export default function Home() {
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Arnold is your chaotic movie coach. Answer the questions and get recommended perfect Arnold movies with over-the-top Arnold-style commentary!
           </p>
-        </div>
+        </header>
 
         {/* Quiz or Results */}
         {!hasSubmitted ? (
@@ -208,6 +237,7 @@ export default function Home() {
           </div>
         )}
       </div>
-    </div>
+      </main>
+    </>
   );
 }
