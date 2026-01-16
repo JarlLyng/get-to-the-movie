@@ -83,7 +83,6 @@ export default function RootLayout({
       <body className="antialiased">
         {children}
         <Script
-          defer
           src="https://umami-iamjarl.vercel.app/script.js"
           data-website-id="2b6e91c9-04a3-4f6c-9e85-0ce515327611"
           strategy="afterInteractive"
