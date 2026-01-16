@@ -62,6 +62,17 @@ export const metadata: Metadata = {
     // Add Google Search Console verification if needed
     // google: "your-google-verification-code",
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon-16x16.png', type: 'image/png', sizes: '16x16' },
+      { url: '/icon-32x32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/apple-touch-icon.png', type: 'image/png', sizes: '180x180' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -71,6 +82,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Preconnect to external domains for performance */}
+        <link rel="preconnect" href="https://api.themoviedb.org" />
+        <link rel="preconnect" href="https://image.tmdb.org" />
+        <link rel="preconnect" href="https://umami-iamjarl.vercel.app" />
+        {/* Theme color for mobile browsers */}
+        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+      </head>
       <body className="antialiased">
         {children}
         <Script
