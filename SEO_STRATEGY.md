@@ -2,7 +2,7 @@
 
 Site: https://gettothemovie.iamjarl.com  
 Stack: Next.js 16 (static export) + GitHub Pages  
-Google Search Console: Ikke connected endnu  
+Google Search Console: Connected  
 Umami Analytics: Connected  
 Last updated: 2026-04-15
 
@@ -41,25 +41,15 @@ SEO positioning: **den sjoveste Arnold Schwarzenegger film-quiz** — differenti
 - [x] Hero med H1: "GET TO THE MOVIE!" + subtitle
 - [x] Structured results UI med H2: "Your Recommendations"
 
-### Cross-linking (delvist)
+### Cross-linking (done)
 
-- [x] Footer link til iamjarl.com
-- [ ] EmotionWave, Made by Human og andre IAMJARL-projekter mangler
-
----
-
-## 3. DU SKAL: Ret fejl i koden
-
-Se `RETTELSER.md` i projektets rod. Opsummering:
-
-1. **Cross-links i footer** → Tilføj links til EmotionWave, Made by Human og andre IAMJARL-projekter
-2. **llms.txt** → Opret i `public/llms.txt`
-3. **robots.txt AI-bots** → Tilføj eksplicitte regler for AI-crawlere
-4. **Google Search Console** → Connect og verificer
+- [x] Footer links til iamjarl.com, EmotionWave, Made by Human, BeerTuner
+- [x] `robots.txt` med eksplicitte AI-bot regler (GPTBot, ClaudeBot, PerplexityBot, etc.)
+- [x] `public/llms.txt` for AI/LLM-indeksering
 
 ---
 
-## 4. Keyword-strategi
+## 3. Keyword-strategi
 
 ### Tier 1 — Direkte quiz-søgninger
 
@@ -93,7 +83,7 @@ Se `RETTELSER.md` i projektets rod. Opsummering:
 
 ---
 
-## 5. GEO — Generative Engine Optimization
+## 4. GEO — Generative Engine Optimization
 
 ### Hvad der er på plads
 
@@ -103,38 +93,8 @@ Se `RETTELSER.md` i projektets rod. Opsummering:
 - Crawlbar "How It Works" og FAQ-sektioner
 - Static export = fuld HTML tilgængelig for alle crawlere
 
-### DU SKAL: Tilføj llms.txt
-
-Opret `public/llms.txt`:
-
-```
-# Get to the Movie!
-
-> Arnold Schwarzenegger movie recommendation quiz
-
-Get to the Movie! is a free interactive quiz where you answer 4 personality-based questions and get personalized Arnold Schwarzenegger movie recommendations with over-the-top Arnold-style commentary.
-
-## How it works
-1. Answer 4 questions: mood, energy level, brain capacity, and era preference
-2. The recommendation engine matches your answers against Arnold's full filmography via TMDB
-3. Get 1-3 personalized movie recommendations with Arnold commentary
-
-## Top Arnold Movies Featured
-- The Terminator (1984) — sci-fi action classic
-- Predator (1987) — military sci-fi
-- Total Recall (1990) — mind-bending action
-- Terminator 2: Judgment Day (1991) — groundbreaking sequel
-- True Lies (1994) — action comedy
-
-## Technical
-- Built with Next.js 16 (static export)
-- TMDB API for movie data
-- Free, no account needed
-
-## Links
-- Website: https://gettothemovie.iamjarl.com
-- Developer: https://iamjarl.com
-```
+### llms.txt
+Implementeret i `public/llms.txt`.
 
 ### Target queries for AI-citation
 
@@ -155,31 +115,25 @@ Disse fremgår allerede i FAQ og structured data:
 
 ---
 
-## 6. DU SKAL: Udvid content (Phase 2)
+## 5. Content expansion (Phase 2)
 
-### Nye sider
+Tracked in [GitHub Issues](https://github.com/JarlLyng/get-to-the-movie/issues).
 
-1. **`/movies`** — Complete Arnold Filmography med ItemList JSON-LD, IMDB-ratings, synopsis. Target: "arnold schwarzenegger filmography", "complete list of arnold movies"
-2. **`/about`** — Quiz development story + cross-links. Target: "how the arnold quiz works"
-
-### Social sharing
-
-- Tilføj "Share Your Result" CTA efter quiz-resultat
-- Pre-filled tweet: "I got [Movie]! What's your Arnold? [link]"
-- OG-billede per resultat (dynamisk eller template)
+- **`/movies`** — Complete Arnold Filmography (#34)
+- **`/about`** — Quiz story + cross-links (#35)
+- **Social sharing CTA** — Share results on Twitter/X (#36)
 
 ---
 
-## 7. Cross-linking
+## 6. Cross-linking
 
-### Fra Get to the Movie til andre IAMJARL-projekter
+### Fra Get to the Movie til andre IAMJARL-projekter (implementeret)
 
-Tilføj i footer (ved siden af TMDB attribution):
-
-- [iamjarl.com](https://iamjarl.com) — portfolio (allerede til stede)
-- [EmotionWave](https://emotionwave.iamjarl.com) — AI-powered entertainment (relateret)
+Footer `<nav>` i `src/app/page.tsx` linker til:
+- [iamjarl.com](https://iamjarl.com) — portfolio
+- [EmotionWave](https://emotionwave.iamjarl.com) — AI-powered entertainment
 - [Made by Human](https://madebyhuman.iamjarl.com) — AI transparency badge
-- [BeerTuner](https://beertuner.iamjarl.com) — music rating (entertainment cluster)
+- [BeerTuner](https://beertuner.iamjarl.com) — music rating
 
 ### Fra andre projekter til Get to the Movie
 
@@ -188,7 +142,7 @@ Tilføj i footer (ved siden af TMDB attribution):
 
 ---
 
-## 8. Where to make noise
+## 7. Where to make noise
 
 ### Reddit
 
@@ -210,7 +164,7 @@ Tilføj i footer (ved siden af TMDB attribution):
 
 ---
 
-## 9. Monitoring
+## 8. Monitoring
 
 - **Google Search Console**: Connect, ugentlig check — impressions, clicks, crawl errors
 - **Umami Analytics**: Quiz completion rate, time on page, referral sources

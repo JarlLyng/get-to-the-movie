@@ -59,27 +59,17 @@
 - [x] Umami analytics (self-hosted at umami-iamjarl.vercel.app)
 - [x] Event tracking: quiz_started, quiz_completed, quiz_reset, recommendations_received, etc.
 
----
-
-## Not Yet Implemented
-
 ### Search Engine Verification
 - [x] Google Search Console — domænet er registreret
-- [ ] Bing Webmaster Tools verification
 
-### Performance Monitoring
-- [ ] Core Web Vitals monitoring (LCP, CLS, FID)
-- [ ] Lighthouse CI: maintain >90 performance score
-
-### Phase 2 Content
-- [ ] `/movies` page — complete Arnold filmography with ratings, synopsis, internal links
-- [ ] `/about` page — quiz story + cross-links to iamjarl.com ecosystem
-- [ ] Social sharing CTA on results page (pre-filled tweet)
-- [ ] "Top Arnold Movies" table on homepage
-- [ ] Internal linking between pages (Quiz → Movies → About)
-
-### Cross-linking (done)
+### Cross-linking
 - [x] Footer nav with links to EmotionWave, Made by Human, BeerTuner, iamjarl.com
+
+---
+
+## Outstanding
+
+Tracked in [GitHub Issues](https://github.com/JarlLyng/get-to-the-movie/issues).
 
 ---
 
