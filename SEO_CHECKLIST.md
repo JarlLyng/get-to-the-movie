@@ -64,7 +64,7 @@
 ## Not Yet Implemented
 
 ### Search Engine Verification
-- [ ] Google Search Console verification (add to `metadata.verification.google` in `layout.tsx`)
+- [x] Google Search Console — domænet er registreret
 - [ ] Bing Webmaster Tools verification
 
 ### Performance Monitoring

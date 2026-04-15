@@ -22,6 +22,6 @@ Oprettet `public/llms.txt` med struktureret projekt-summary for AI/LLM-indekseri
 
 ---
 
-## 4. ⬜ Google Search Console ikke connected
+## 4. ✅ Google Search Console connected
 
-Kræver manuel opsætning. Tilføj verification-kode til `metadata.verification.google` i `src/app/layout.tsx` efter GSC-registrering.
+Domænet er registreret i GSC.
