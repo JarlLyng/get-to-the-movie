@@ -43,7 +43,8 @@
 - [x] Semantic HTML: `<header>`, `<main>`, `<section>`, `<footer>`, `<details>`
 
 ### Technical SEO
-- [x] `public/robots.txt` — allows all crawlers, links to sitemap
+- [x] `public/robots.txt` — allows all crawlers + explicit AI bot rules (GPTBot, ClaudeBot, PerplexityBot, etc.)
+- [x] `public/llms.txt` — structured summary for AI/LLM indexing
 - [x] `src/app/sitemap.ts` — auto-generated sitemap with `force-static` export
 - [x] Static export via `next.config.ts` (`output: 'export'`) — excellent Core Web Vitals
 - [x] Image alt text on all images (movie posters include title + year)
@@ -77,9 +78,8 @@
 - [ ] "Top Arnold Movies" table on homepage
 - [ ] Internal linking between pages (Quiz → Movies → About)
 
-### Phase 2 Cross-linking
-- [ ] "Made by Human + AI" badge linking to madebyhuman.iamjarl.com
-- [ ] Related project link to emotionwave.iamjarl.com
+### Cross-linking (done)
+- [x] Footer nav with links to EmotionWave, Made by Human, BeerTuner, iamjarl.com
 
 ---
 
@@ -104,7 +104,8 @@
 | FAQ section (on-page) | `src/app/page.tsx` (FAQ section near bottom) |
 | How It Works (on-page) | `src/app/page.tsx` (How It Works section) |
 | Footer + TMDB attribution | `src/app/page.tsx` (footer element) |
-| robots.txt | `public/robots.txt` |
+| robots.txt (with AI bot rules) | `public/robots.txt` |
+| llms.txt (AI/LLM summary) | `public/llms.txt` |
 | Sitemap | `src/app/sitemap.ts` |
 | OG image | `public/og-image.png` |
 | Analytics tracking | `src/lib/umami.ts` |

@@ -401,20 +401,36 @@ export default function Home() {
 
         {/* Footer with TMDB attribution & cross-links */}
         <footer className="relative z-10 container mx-auto px-4 py-8 max-w-5xl border-t border-border">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>
-              Built by{' '}
-              <a href="https://iamjarl.com" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-                Jarl Lyng
+          <div className="flex flex-col gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p>
+                Built by{' '}
+                <a href="https://iamjarl.com" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                  Jarl Lyng
+                </a>
+              </p>
+              <p>
+                Movie data provided by{' '}
+                <a href="https://www.themoviedb.org/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                  TMDB
+                </a>
+                . This product uses the TMDB API but is not endorsed or certified by TMDB.
+              </p>
+            </div>
+            <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" aria-label="Related projects">
+              <a href="https://emotionwave.iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                EmotionWave
               </a>
-            </p>
-            <p>
-              Movie data provided by{' '}
-              <a href="https://www.themoviedb.org/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-                TMDB
+              <a href="https://madebyhuman.iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                Made by Human
               </a>
-              . This product uses the TMDB API but is not endorsed or certified by TMDB.
-            </p>
+              <a href="https://beertuner.iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                BeerTuner
+              </a>
+              <a href="https://iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                More projects
+              </a>
+            </nav>
           </div>
         </footer>
       </main>
