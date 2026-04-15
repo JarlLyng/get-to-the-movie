@@ -69,24 +69,103 @@ export default function Home() {
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
 
-  // Structured data for SEO
+  // Structured data for SEO — @graph stacking for AI engine optimization
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Get to the Movie!",
-    "description": "Arnold Schwarzenegger-inspired movie recommendation app. Answer quiz questions and get recommended perfect Arnold movies!",
-    "url": baseUrl,
-    "applicationCategory": "EntertainmentApplication",
-    "operatingSystem": "Web",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "creator": {
-      "@type": "Organization",
-      "name": "IAMJARL"
-    }
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Get to the Movie!",
+        "description": "AI-powered Arnold Schwarzenegger movie recommendation quiz. Answer personality-based questions and get matched to your perfect Arnold film.",
+        "url": baseUrl,
+        "applicationCategory": "EntertainmentApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "creator": {
+          "@type": "Person",
+          "name": "Jarl Lyng",
+          "url": "https://iamjarl.com"
+        }
+      },
+      {
+        "@type": "ItemList",
+        "name": "Arnold Schwarzenegger Movie Recommendations",
+        "description": "Top Arnold Schwarzenegger movies featured in the recommendation quiz",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "The Terminator (1984)",
+            "description": "Time-traveling assassin sci-fi action classic"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Predator (1987)",
+            "description": "Elite commandos hunted by an alien warrior in the jungle"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Total Recall (1990)",
+            "description": "Mind-bending sci-fi reality thriller on Mars"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Terminator 2: Judgment Day (1991)",
+            "description": "Groundbreaking sequel where Arnold protects humanity's future"
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "name": "True Lies (1994)",
+            "description": "Action-comedy about a secret agent's double life"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does the Arnold movie quiz work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Answer 4 personality-based questions about your mood, energy level, brain capacity, and era preference. The quiz matches your answers to Arnold Schwarzenegger movies using TMDB data and gives you 1-3 personalized recommendations with Arnold-style commentary."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Which Arnold Schwarzenegger movie should I watch?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "It depends on your mood! Action lovers should try Predator or Terminator, sci-fi fans will enjoy Total Recall, comedy fans love Kindergarten Cop, and for a mix of action and humor, True Lies is the go-to pick. Take the quiz to get a personalized recommendation."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is the movie quiz free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Get to the Movie! is completely free. Take the quiz as many times as you want to discover different Arnold Schwarzenegger movie recommendations."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many Arnold movies are in the quiz?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The quiz pulls from Arnold Schwarzenegger's full filmography via TMDB, covering his iconic movies from the 1980s to modern releases — action, sci-fi, comedy, and thriller."
+            }
+          }
+        ]
+      }
+    ]
   };
 
   return (
@@ -235,6 +314,94 @@ export default function Home() {
           </div>
         )}
       </div>
+
+        {/* How It Works — SEO crawlable content */}
+        <section className="relative z-10 container mx-auto px-4 py-16 max-w-5xl">
+          <h2 className="text-3xl font-bold text-primary mb-8 text-center">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center space-y-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary text-xl font-bold">1</div>
+              <h3 className="text-lg font-semibold text-foreground">Answer 4 Questions</h3>
+              <p className="text-muted-foreground text-sm">Tell Arnold about your mood, energy level, brain capacity, and what era of movies you prefer.</p>
+            </div>
+            <div className="text-center space-y-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary text-xl font-bold">2</div>
+              <h3 className="text-lg font-semibold text-foreground">Get Matched</h3>
+              <p className="text-muted-foreground text-sm">Our recommendation engine analyzes your answers against Arnold&apos;s full filmography from TMDB to find your perfect match.</p>
+            </div>
+            <div className="text-center space-y-3">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary text-xl font-bold">3</div>
+              <h3 className="text-lg font-semibold text-foreground">Watch the Movie!</h3>
+              <p className="text-muted-foreground text-sm">Get 1-3 personalized Arnold movie recommendations with over-the-top Arnold-style commentary. GET TO THE MOVIE!</p>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section — SEO long-tail keyword targeting */}
+        <section className="relative z-10 container mx-auto px-4 py-16 max-w-3xl">
+          <h2 className="text-3xl font-bold text-primary mb-8 text-center">Frequently Asked Questions</h2>
+          <div className="space-y-6">
+            <details className="group border border-border rounded-lg p-4 cursor-pointer">
+              <summary className="font-semibold text-foreground group-open:text-primary transition-colors">
+                How does the Arnold movie quiz work?
+              </summary>
+              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                Answer 4 personality-based questions about your mood, energy level, brain capacity, and era preference. The quiz matches your answers to Arnold Schwarzenegger movies using TMDB data and gives you 1-3 personalized recommendations with Arnold-style commentary.
+              </p>
+            </details>
+            <details className="group border border-border rounded-lg p-4 cursor-pointer">
+              <summary className="font-semibold text-foreground group-open:text-primary transition-colors">
+                Which Arnold Schwarzenegger movie should I watch?
+              </summary>
+              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                It depends on your mood! Action lovers should try Predator or Terminator, sci-fi fans will enjoy Total Recall, comedy fans love Kindergarten Cop, and for a mix of action and humor, True Lies is the go-to pick. Take the quiz above for a personalized recommendation.
+              </p>
+            </details>
+            <details className="group border border-border rounded-lg p-4 cursor-pointer">
+              <summary className="font-semibold text-foreground group-open:text-primary transition-colors">
+                Is the movie quiz free?
+              </summary>
+              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                Yes! Get to the Movie! is completely free. Take the quiz as many times as you want to discover different Arnold Schwarzenegger movie recommendations.
+              </p>
+            </details>
+            <details className="group border border-border rounded-lg p-4 cursor-pointer">
+              <summary className="font-semibold text-foreground group-open:text-primary transition-colors">
+                How many Arnold movies are in the quiz?
+              </summary>
+              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                The quiz pulls from Arnold Schwarzenegger&apos;s full filmography via TMDB, covering his iconic movies from the 1980s to modern releases — action, sci-fi, comedy, and thriller genres are all represented.
+              </p>
+            </details>
+            <details className="group border border-border rounded-lg p-4 cursor-pointer">
+              <summary className="font-semibold text-foreground group-open:text-primary transition-colors">
+                Can I retake the quiz with different answers?
+              </summary>
+              <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+                Absolutely! After seeing your results, click &ldquo;Try Again&rdquo; or &ldquo;Get More Recommendations&rdquo; to retake the quiz. Different answers lead to different Arnold movie recommendations.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        {/* Footer with TMDB attribution & cross-links */}
+        <footer className="relative z-10 container mx-auto px-4 py-8 max-w-5xl border-t border-border">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+            <p>
+              Built by{' '}
+              <a href="https://iamjarl.com" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                Jarl Lyng
+              </a>
+            </p>
+            <p>
+              Movie data provided by{' '}
+              <a href="https://www.themoviedb.org/" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                TMDB
+              </a>
+              . This product uses the TMDB API but is not endorsed or certified by TMDB.
+            </p>
+          </div>
+        </footer>
       </main>
     </>
   );

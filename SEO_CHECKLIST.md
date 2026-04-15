@@ -1,73 +1,111 @@
-# SEO Checklist - Get to the Movie!
+# SEO Implementation Checklist — Get to the Movie!
 
-## ✅ Implementeret
+> Quick-reference for developers and AI agents. Each item links to the file where it's implemented.  
+> For the full SEO/GEO strategy, see [SEO_STRATEGY.md](./SEO_STRATEGY.md).
 
-### Core SEO
-- ✅ Title tag med template
-- ✅ Meta description
-- ✅ Keywords meta tag
-- ✅ Canonical URL (via metadataBase)
-- ✅ Language attribute (lang="en")
-- ✅ Robots meta tags (index, follow)
-- ✅ Googlebot specific settings
+**Last updated:** 2026-04-15
 
-### Social Media
-- ✅ Open Graph tags (Facebook, LinkedIn)
-- ✅ Twitter Card tags
-- ✅ Open Graph image (1200×630px)
-- ✅ Social media descriptions
+---
+
+## Implemented
+
+### Core SEO — `src/app/layout.tsx`
+- [x] Title tag with template: `Get to the Movie! — Arnold Schwarzenegger Recommendation Quiz`
+- [x] Meta description (155 chars, action-oriented with "Free quiz" CTA)
+- [x] Keywords meta tag (11 keywords incl. long-tail: "which arnold movie should i watch")
+- [x] Canonical URL via `metadataBase` → `https://gettothemovie.iamjarl.com`
+- [x] Language attribute: `lang="en"` on `<html>`
+- [x] Robots meta tags: `index: true, follow: true`
+- [x] Googlebot specific: max-video-preview, max-image-preview "large", max-snippet
+
+### Open Graph & Social — `src/app/layout.tsx`
+- [x] og:type: `website`
+- [x] og:title: `Get to the Movie! — What's Your Arnold?`
+- [x] og:description (personality quiz angle)
+- [x] og:image: `/og-image.png` (1200x630px)
+- [x] twitter:card: `summary_large_image`
+- [x] twitter:title (matches OG title)
+- [x] twitter:creator: `@iamjarl`
+
+### Structured Data (JSON-LD) — `src/app/page.tsx`
+- [x] `@graph` stacking with 3 schema types:
+  - `WebApplication` — name, description, URL, category, free offer, creator (Person)
+  - `ItemList` — Top 5 Arnold movies (Terminator, Predator, Total Recall, T2, True Lies)
+  - `FAQPage` — 4 questions matching the on-page FAQ section
+
+### On-Page SEO Content — `src/app/page.tsx`
+- [x] H1: "GET TO THE MOVIE!" (hero section)
+- [x] H2: "How It Works" — 3-step explainer with crawlable text
+- [x] H2: "Your Recommendations" — shown after quiz completion
+- [x] H2: "Frequently Asked Questions" — 5 FAQs in `<details>` elements
+- [x] Footer with TMDB attribution (required by TMDB ToS)
+- [x] Footer with cross-link to iamjarl.com
+- [x] Semantic HTML: `<header>`, `<main>`, `<section>`, `<footer>`, `<details>`
 
 ### Technical SEO
-- ✅ robots.txt
-- ✅ sitemap.xml (auto-generated)
-- ✅ Structured data (JSON-LD Schema.org)
-- ✅ Semantic HTML (header, main tags)
-- ✅ Alt tags på alle billeder
-- ✅ Mobile-friendly (viewport handled by Next.js)
+- [x] `public/robots.txt` — allows all crawlers, links to sitemap
+- [x] `src/app/sitemap.ts` — auto-generated sitemap with `force-static` export
+- [x] Static export via `next.config.ts` (`output: 'export'`) — excellent Core Web Vitals
+- [x] Image alt text on all images (movie posters include title + year)
+- [x] ARIA labels on interactive elements (buttons)
 
-### Icons & Branding
-- ✅ favicon.ico
-- ✅ Multiple icon sizes (16×16, 32×32, 180×180)
-- ✅ Apple touch icon
-- ✅ Icon metadata configured
+### Icons & Branding — `src/app/layout.tsx`
+- [x] `favicon.ico`
+- [x] Icon sizes: 16x16, 32x32, 180x180
+- [x] Apple touch icon configured
 
-### Performance
-- ✅ Static export (fast loading)
-- ✅ Optimized images (Next.js Image component)
-- ✅ Deferred scripts (Umami analytics)
+### Analytics — `src/app/layout.tsx` + `src/lib/umami.ts`
+- [x] Umami analytics (self-hosted at umami-iamjarl.vercel.app)
+- [x] Event tracking: quiz_started, quiz_completed, quiz_reset, recommendations_received, etc.
 
-## 📝 Valgfri forbedringer (nice-to-have)
+---
 
-### Performance optimeringer
-- Preconnect til eksterne domæner (TMDb API, Umami)
-- Theme color meta tag for mobile browsers
-- DNS prefetch
+## Not Yet Implemented
 
-### Advanced SEO
-- Google Search Console verification
-- Bing Webmaster Tools verification
-- Analytics integration (Umami ✅ allerede implementeret)
+### Search Engine Verification
+- [ ] Google Search Console verification (add to `metadata.verification.google` in `layout.tsx`)
+- [ ] Bing Webmaster Tools verification
 
-### Content
-- H1 tag (✅ allerede implementeret)
-- Proper heading hierarchy
-- Internal linking (n/a for single-page app)
+### Performance Monitoring
+- [ ] Core Web Vitals monitoring (LCP, CLS, FID)
+- [ ] Lighthouse CI: maintain >90 performance score
 
-## 🎯 SEO Score
+### Phase 2 Content
+- [ ] `/movies` page — complete Arnold filmography with ratings, synopsis, internal links
+- [ ] `/about` page — quiz story + cross-links to iamjarl.com ecosystem
+- [ ] Social sharing CTA on results page (pre-filled tweet)
+- [ ] "Top Arnold Movies" table on homepage
+- [ ] Internal linking between pages (Quiz → Movies → About)
 
-**Status: Produktionsklar** ✅
+### Phase 2 Cross-linking
+- [ ] "Made by Human + AI" badge linking to madebyhuman.iamjarl.com
+- [ ] Related project link to emotionwave.iamjarl.com
 
-Alle essentielle SEO-elementer er implementeret. Projektet er optimeret for:
-- Search engines (Google, Bing, etc.)
-- Social media sharing (Facebook, Twitter, LinkedIn)
-- Mobile devices
-- Accessibility
-- Performance
+---
 
-## 📊 Test Tools
+## Validation Tools
 
-Test din SEO med:
-- [Google Rich Results Test](https://search.google.com/test/rich-results)
-- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
-- [Google PageSpeed Insights](https://pagespeed.web.dev/)
+| Tool | URL |
+|------|-----|
+| Google Rich Results Test | https://search.google.com/test/rich-results |
+| Schema.org Validator | https://validator.schema.org/ |
+| Facebook Sharing Debugger | https://developers.facebook.com/tools/debug/ |
+| Twitter Card Validator | https://cards-dev.twitter.com/validator |
+| Google PageSpeed Insights | https://pagespeed.web.dev/ |
+
+---
+
+## File Map
+
+| SEO Feature | File |
+|-------------|------|
+| Meta tags, OG, Twitter | `src/app/layout.tsx` |
+| JSON-LD structured data | `src/app/page.tsx` (structuredData const) |
+| FAQ section (on-page) | `src/app/page.tsx` (FAQ section near bottom) |
+| How It Works (on-page) | `src/app/page.tsx` (How It Works section) |
+| Footer + TMDB attribution | `src/app/page.tsx` (footer element) |
+| robots.txt | `public/robots.txt` |
+| Sitemap | `src/app/sitemap.ts` |
+| OG image | `public/og-image.png` |
+| Analytics tracking | `src/lib/umami.ts` |
+| Static export config | `next.config.ts` |
