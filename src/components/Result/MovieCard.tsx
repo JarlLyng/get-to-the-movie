@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import type { RecommendedMovie } from '@/types/quiz';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 type MovieCardProps = {
@@ -53,13 +53,13 @@ export function MovieCard({ movie }: MovieCardProps) {
             </div>
             <div className="mt-6 p-6 bg-gradient-to-r from-primary/10 to-transparent border-l-2 border-primary relative overflow-hidden group-hover:from-primary/20 transition-colors duration-500">
               <div className="absolute top-0 right-0 p-4 opacity-10">
-                <span className="text-6xl font-serif">"</span>
+                <span className="text-6xl font-serif">&quot;</span>
               </div>
               <p className="text-xl md:text-2xl font-bold text-white italic leading-relaxed relative z-10 font-heading">
-                "{movie.arnoldComment}"
+                &quot;{movie.arnoldComment}&quot;
               </p>
               <div className="mt-2 text-primary/70 font-mono text-xs uppercase tracking-widest">
-                // ARNOLD.AI ANALYSIS COMPLETE
+                {'// ARNOLD.AI ANALYSIS COMPLETE'}
               </div>
             </div>
           </div>

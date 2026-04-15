@@ -159,13 +159,13 @@ async function fetchArnoldMovies(apiKey: string, quiz: QuizState): Promise<TMDBM
   // So we prioritize movies that match the mood preference through sorting
   if (quiz.mood === 'funny') {
     // Prefer comedies (we can't filter by genre in fallback, but we can prioritize)
-    filtered.sort((a, b) => {
+    filtered.sort((_a, _b) => {
       // If we had genre_ids, we'd filter here, but for now we'll just return filtered
       return 0;
     });
   } else if (quiz.mood === 'dark') {
     // Prefer thrillers
-    filtered.sort((a, b) => {
+    filtered.sort((_a, _b) => {
       // If we had genre_ids, we'd filter here, but for now we'll just return filtered
       return 0;
     });
@@ -180,7 +180,7 @@ function selectMovies(movies: TMDBMovie[], quiz: QuizState, count: number = 3): 
   
   // Filter and sort based on quiz preferences
   // Use a combined scoring system so both energy and brainLevel affect the result
-  let filtered = [...movies];
+  const filtered = [...movies];
   
   // Calculate combined score: energy (vote_average) + brainLevel (popularity)
   // Both preferences should influence the final ranking

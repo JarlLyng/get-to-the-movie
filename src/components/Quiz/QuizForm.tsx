@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import type { QuizState, BrainLevel, EnergyLevel, Era, Mood } from '@/types/quiz';
 import { QuizQuestion } from './QuizQuestion';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { trackEvent, UmamiEvents } from '@/lib/umami';
 
 type QuizFormProps = {

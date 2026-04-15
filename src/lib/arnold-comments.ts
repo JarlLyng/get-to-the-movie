@@ -1,7 +1,7 @@
 import type { ArnoldCommentContext } from '@/types/quiz';
 
 export function getArnoldComment(ctx: ArnoldCommentContext): string {
-  const { quiz, movieTitle, year, voteAverage } = ctx;
+  const { quiz, movieTitle, voteAverage } = ctx;
   
   const comments: string[] = [];
   
