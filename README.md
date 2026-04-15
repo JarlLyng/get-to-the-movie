@@ -1,5 +1,7 @@
 # Get to the Movie!
 
+![Human in the Loop](https://madebyhuman.iamjarl.com/badges/loop-white.svg)
+
 An Arnold Schwarzenegger movie recommendation quiz. Answer 4 personality-driven questions and get 1–3 personalized movie recommendations with over-the-top Arnold-style commentary.
 
 **Live:** https://gettothemovie.iamjarl.com  
