@@ -4,8 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /**
- * IAMJARL Design System Tokens
- * Source: https://jarllyng.github.io/iamjarl-design/tokens.json
+ * IAMJARL Design System Tokens - Terminator Redux
  */
 
 @theme inline {
@@ -27,14 +26,13 @@
   --color-warning: var(--iamjarl-warning);
   --color-error: var(--iamjarl-error);
   
-  /* Legacy shadcn/ui compatibility (mapped to IAMJARL tokens) */
+  /* Legacy shadcn/ui compatibility */
   --color-background: var(--iamjarl-background-app);
   --color-foreground: var(--iamjarl-text-primary);
   --color-card: var(--iamjarl-background-card);
   --color-card-foreground: var(--iamjarl-text-primary);
   --color-popover: var(--iamjarl-surface-default);
   --color-popover-foreground: var(--iamjarl-text-primary);
-  --color-primary-foreground: var(--iamjarl-text-inverse);
   --color-secondary: var(--iamjarl-background-muted);
   --color-secondary-foreground: var(--iamjarl-text-primary);
   --color-muted: var(--iamjarl-background-muted);
@@ -47,76 +45,79 @@
   --color-ring: var(--iamjarl-primary);
   
   /* Typography */
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --font-heading: var(--font-outfit), system-ui, sans-serif;
   
-  /* Radius (IAMJARL tokens) */
+  /* Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+  --radius-xl: 24px;
   
-  /* Legacy compatibility */
   --radius: var(--radius-md);
+  
+  --animate-scan: scan 2s linear infinite;
+  --animate-pulse-glow: pulseGlow 3s ease-in-out infinite;
+
+  @keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 15px var(--iamjarl-primary)); }
+    50% { opacity: 0.4; filter: drop-shadow(0 0 5px var(--iamjarl-primary)); }
+  }
 }
 
-/* Light Mode (Default) */
+/* Light Mode (Kept for fallback, but we use dark mode by default) */
 :root {
-  /* Primary */
-  --iamjarl-primary: #00FF7B;
-  
-  /* Text */
+  --iamjarl-primary: #FF101F;
   --iamjarl-text-primary: #000000;
   --iamjarl-text-secondary: rgba(0, 0, 0, 0.70);
   --iamjarl-text-tertiary: rgba(0, 0, 0, 0.55);
   --iamjarl-text-inverse: #FFFFFF;
-  
-  /* Background */
   --iamjarl-background-app: #FFFFFF;
   --iamjarl-background-muted: rgba(0, 0, 0, 0.04);
   --iamjarl-background-card: rgba(0, 0, 0, 0.04);
-  
-  /* Surface */
   --iamjarl-surface-default: #FFFFFF;
   --iamjarl-surface-raised: rgba(0, 0, 0, 0.02);
-  
-  /* Border */
   --iamjarl-border-subtle: rgba(0, 0, 0, 0.10);
   --iamjarl-border-default: rgba(0, 0, 0, 0.16);
-  
-  /* States */
   --iamjarl-success: #4CAF50;
   --iamjarl-warning: #FF6B35;
   --iamjarl-error: #FF3B30;
 }
 
-/* Dark Mode */
-.dark {
-  /* Primary */
-  --iamjarl-primary: #D0FF00;
+/* Dark Mode - Terminator Vibe */
+.dark, :root {
+  /* Primary Terminator Red */
+  --iamjarl-primary: #FF2A2A;
   
   /* Text */
   --iamjarl-text-primary: #FFFFFF;
-  --iamjarl-text-secondary: rgba(255, 255, 255, 0.75);
-  --iamjarl-text-tertiary: rgba(255, 255, 255, 0.60);
+  --iamjarl-text-secondary: rgba(255, 255, 255, 0.70);
+  --iamjarl-text-tertiary: rgba(255, 255, 255, 0.50);
   --iamjarl-text-inverse: #000000;
   
   /* Background */
-  --iamjarl-background-app: #000000;
-  --iamjarl-background-muted: rgba(255, 255, 255, 0.05);
-  --iamjarl-background-card: rgba(255, 255, 255, 0.05);
+  --iamjarl-background-app: #050505;
+  --iamjarl-background-muted: rgba(255, 42, 42, 0.05); /* Subtle red tint */
+  --iamjarl-background-card: rgba(20, 20, 20, 0.6);
   
   /* Surface */
-  --iamjarl-surface-default: #000000;
-  --iamjarl-surface-raised: rgba(255, 255, 255, 0.03);
+  --iamjarl-surface-default: #0A0A0A;
+  --iamjarl-surface-raised: rgba(255, 255, 255, 0.05);
   
   /* Border */
-  --iamjarl-border-subtle: rgba(255, 255, 255, 0.12);
-  --iamjarl-border-default: rgba(255, 255, 255, 0.18);
+  --iamjarl-border-subtle: rgba(255, 255, 255, 0.08);
+  --iamjarl-border-default: rgba(255, 255, 255, 0.15);
   
-  /* States (same in both modes) */
+  /* States */
   --iamjarl-success: #4CAF50;
   --iamjarl-warning: #FF6B35;
-  --iamjarl-error: #FF3B30;
+  --iamjarl-error: #FF2A2A;
 }
 
 @layer base {
@@ -125,5 +126,21 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-background-card backdrop-blur-xl border border-border-default shadow-xl;
+  }
+  .glass-button {
+    @apply relative overflow-hidden bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 transition-all duration-300;
+  }
+  .neon-text {
+    text-shadow: 0 0 10px rgba(255, 42, 42, 0.5), 0 0 20px rgba(255, 42, 42, 0.3);
   }
 }

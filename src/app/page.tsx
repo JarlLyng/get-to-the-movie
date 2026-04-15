@@ -175,21 +175,26 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <main className="min-h-screen bg-background text-foreground relative overflow-hidden">
-      {/* Grid pattern background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none"></div>
+      {/* Cinematic Deep Background */}
+      <div className="absolute inset-0 bg-[#050505] pointer-events-none"></div>
+      
+      {/* Cyber Grid with depth */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--iamjarl-border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--iamjarl-border-subtle)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_110%)] opacity-30 pointer-events-none transform perspective-[1000px] rotateX(60deg) scale(2.5) origin-top"></div>
+      
+      {/* Red ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[500px] bg-primary/20 blur-[150px] rounded-full pointer-events-none animate-pulse-glow"></div>
+      
       <div className="relative container mx-auto px-4 py-16 max-w-5xl z-10">
         {/* Hero Section */}
-        <header className="text-center mb-16 space-y-6">
-          <div className="inline-flex items-center justify-center">
-            <div className="absolute inset-0 bg-primary blur-2xl opacity-30 animate-pulse"></div>
-            <h1 className="relative text-6xl md:text-7xl font-bold mb-2 text-primary tracking-tight">
+        <header className="text-center mb-16 space-y-6 relative">
+          <div className="inline-flex items-center justify-center relative">
+            <h1 className="relative text-7xl md:text-8xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-primary/80 tracking-tighter uppercase neon-text transform hover:scale-[1.02] transition-transform duration-500">
               GET TO THE MOVIE!
             </h1>
           </div>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Arnold is your chaotic movie coach. Answer the questions and get recommended perfect Arnold movies with over-the-top Arnold-style commentary!
+          <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed font-light">
+            Arnold is your chaotic movie coach. Answer the questions and get perfect Arnold movies with over-the-top Arnold-style commentary! <br/>
+            <span className="text-primary/80 font-bold uppercase tracking-widest text-sm mt-4 block">Terminator mode enganged //</span>
           </p>
         </header>
 
@@ -207,29 +212,39 @@ export default function Home() {
             )}
             
             {isLoading && (
-              <Card className="mt-8 p-8 border-border bg-card backdrop-blur-sm shadow-2xl">
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <Skeleton className="h-10 w-3/4 bg-muted" />
-                    <Skeleton className="h-5 w-full bg-muted" />
-                    <Skeleton className="h-5 w-5/6 bg-muted" />
+              <div className="mt-8 relative overflow-hidden glass-panel rounded-xl p-8 shadow-primary/20 shadow-2xl">
+                {/* Cyberpunk scanning line */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/30 to-transparent h-10 w-full animate-scan z-0 opacity-50 blur-sm pointer-events-none"></div>
+                
+                <div className="relative z-10 space-y-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-3 h-3 rounded-full bg-primary animate-ping"></div>
+                    <p className="text-primary font-mono text-sm uppercase tracking-widest">
+                      Processing Neural Net Data...
+                    </p>
                   </div>
-                  <div className="flex gap-6 mt-8">
-                    <Skeleton className="h-80 w-56 rounded-lg bg-muted" />
+                  
+                  <div className="space-y-3 opacity-60">
+                    <Skeleton className="h-10 w-3/4 bg-primary/20" />
+                    <Skeleton className="h-5 w-full bg-border" />
+                    <Skeleton className="h-5 w-5/6 bg-border" />
+                  </div>
+                  <div className="flex gap-6 mt-8 opacity-60">
+                    <Skeleton className="h-80 w-56 rounded-lg bg-primary/10 border border-primary/20" />
                     <div className="flex-1 space-y-3">
-                      <Skeleton className="h-8 w-2/3 bg-muted" />
-                      <Skeleton className="h-4 w-full bg-muted" />
-                      <Skeleton className="h-4 w-full bg-muted" />
-                      <Skeleton className="h-4 w-4/5 bg-muted" />
+                      <Skeleton className="h-8 w-2/3 bg-primary/20" />
+                      <Skeleton className="h-4 w-full bg-border" />
+                      <Skeleton className="h-4 w-full bg-border" />
+                      <Skeleton className="h-4 w-4/5 bg-border" />
                     </div>
                   </div>
                 </div>
-                <div className="mt-8 text-center">
-                  <p className="text-xl font-semibold text-primary animate-pulse">
+                <div className="mt-8 text-center relative z-10">
+                  <p className="text-2xl font-black text-white uppercase tracking-widest neon-text animate-pulse">
                     Arnold is thinking...
                   </p>
                 </div>
-              </Card>
+              </div>
             )}
           </div>
         ) : (

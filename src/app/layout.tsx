@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
+import { Outfit, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
 
@@ -60,10 +73,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    // Add Google Search Console verification if needed
-    // google: "your-google-verification-code",
-  },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -83,8 +92,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased">
+    <html lang="en" className={`dark ${outfit.variable} ${inter.variable}`}>
+      <body className="antialiased font-sans bg-background text-foreground selection:bg-primary/30 selection:text-primary">
         {children}
         <Script
           src="https://umami-iamjarl.vercel.app/script.js"

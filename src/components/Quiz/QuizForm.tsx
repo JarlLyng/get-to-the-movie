@@ -120,20 +120,22 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
     <form onSubmit={handleSubmit} className="space-y-10 relative z-10" noValidate>
       {/* Progress Indicator */}
       <div className="space-y-2">
-        <div className="flex justify-between items-center text-sm text-muted-foreground">
-          <span>Question {currentStep + 1} of {questions.length}</span>
+        <div className="flex justify-between items-center text-sm font-mono text-primary/80 uppercase tracking-wider">
+          <span>Target Acquired: {currentStep + 1}/{questions.length}</span>
           <span>{Math.round(((currentStep + 1) / questions.length) * 100)}%</span>
         </div>
-        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-black/40 rounded-full h-1 overflow-hidden border border-white/10">
           <div
-            className="bg-primary h-full transition-all duration-300 ease-out"
+            className="bg-primary h-full transition-all duration-300 ease-out shadow-[0_0_10px_var(--iamjarl-primary)]"
             style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
           />
         </div>
       </div>
 
-      <Card className="p-8 md:p-10 space-y-8 border-border bg-card backdrop-blur-sm shadow-2xl min-h-[400px] flex flex-col">
-        <div className="flex-1">
+      <div className="glass-panel p-8 md:p-10 space-y-8 min-h-[400px] flex flex-col rounded-2xl relative overflow-hidden">
+        {/* Subtle inner glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+        <div className="flex-1 relative z-10">
           {currentQuestion.id === 'brainLevel' && (
             <QuizQuestion<BrainLevel>
               question={currentQuestion.question}
@@ -169,15 +171,15 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between items-center pt-6 border-t border-border">
+        <div className="flex justify-between items-center pt-8 border-t border-white/10 relative z-10">
           <Button
             type="button"
             variant="outline"
             onClick={handlePrevious}
             disabled={isFirstStep || isLoading}
-            className="px-6 py-3 font-semibold transition-all"
+            className="px-6 py-3 font-mono text-sm tracking-widest uppercase transition-all bg-transparent border-white/20 hover:bg-white/10 text-white/70"
           >
-            ← Previous
+            ← Back
           </Button>
 
           {isLastStep ? (
@@ -185,22 +187,23 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
               type="submit"
               size="lg"
               disabled={isLoading || !quizState.mood}
-              className="text-lg px-10 py-7 font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/50 hover:shadow-xl hover:shadow-primary/50 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
+              className="group relative overflow-hidden text-lg px-10 py-7 font-black uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_20px_rgba(255,42,42,0.4)] hover:shadow-[0_0_30px_rgba(255,42,42,0.6)] transform hover:scale-[1.03] transition-all duration-300 disabled:opacity-50 border border-primary/50"
             >
-              {isLoading ? 'Arnold is thinking...' : 'PUMP MY MOVIE!'}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-out"></div>
+              {isLoading ? 'Processing...' : 'PUMP MY MOVIE!'}
             </Button>
           ) : (
             <Button
               type="button"
               onClick={handleNext}
               disabled={isLoading || !quizState[currentQuestion.id]}
-              className="px-8 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-3 bg-white hover:bg-gray-200 text-black font-black uppercase tracking-widest disabled:opacity-50 transition-all font-mono text-sm"
             >
-              Next
+              Next →
             </Button>
           )}
         </div>
-      </Card>
+      </div>
     </form>
   );
 }
