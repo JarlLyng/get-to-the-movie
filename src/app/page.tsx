@@ -417,7 +417,14 @@ export default function Home() {
                 . This product uses the TMDB API but is not endorsed or certified by TMDB.
               </p>
             </div>
-            <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" aria-label="Related projects">
+            <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs" aria-label="More from IAMJARL">
+              <span className="w-full text-center opacity-60">More from IAMJARL</span>
+              <a href="https://wodrounds.iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                WODrounds
+              </a>
+              <a href="https://trimrpix.iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                TrimrPix
+              </a>
               <a href="https://emotionwave.iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
                 EmotionWave
               </a>
@@ -428,7 +435,7 @@ export default function Home() {
                 BeerTuner
               </a>
               <a href="https://iamjarl.com" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
-                More projects
+                All projects
               </a>
             </nav>
           </div>
