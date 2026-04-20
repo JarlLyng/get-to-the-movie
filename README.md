@@ -1,6 +1,6 @@
 # Get to the Movie!
 
-![Human in the Loop](https://madebyhuman.iamjarl.com/badges/loop-white.svg)
+[![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
 An Arnold Schwarzenegger movie recommendation quiz. Answer 4 personality-driven questions and get 1–3 personalized movie recommendations with over-the-top Arnold-style commentary.
 
