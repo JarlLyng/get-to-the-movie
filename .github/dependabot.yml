@@ -8,8 +8,6 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 10
-    reviewers:
-      - "JarlLyng"
     labels:
       - "dependencies"
       - "automated"
@@ -47,6 +45,10 @@ updates:
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # ESLint 10 breaks eslint-plugin-react (via eslint-config-next).
+      # Re-enable when eslint-config-next ships ESLint 10 support.
+      - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
 
   # Enable version updates for GitHub Actions
