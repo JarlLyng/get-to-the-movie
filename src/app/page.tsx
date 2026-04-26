@@ -449,7 +449,7 @@ export default function Home() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Jarl Lyng
+                  IAMJARL
                 </a>
               </p>
               <p>
