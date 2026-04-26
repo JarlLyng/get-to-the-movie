@@ -13,7 +13,13 @@ import type {
 
 /**
  * Persona definitions with display data and representative movies.
- * Movie IDs are TMDB IDs (sanity-check: https://www.themoviedb.org/movie/{id}).
+ *
+ * Movie IDs are TMDB IDs. To verify a movie ID, visit:
+ *   https://www.themoviedb.org/movie/{id}
+ * IDs verified against TMDB on 2026-04-21.
+ *
+ * If you add new movies: confirm Arnold is in the cast on the TMDB page,
+ * not just that the ID resolves to a movie.
  */
 export const personas: Record<PersonaId, Persona> = {
   terminator: {
@@ -41,11 +47,13 @@ export const personas: Record<PersonaId, Persona> = {
     catchphrase: "Let off some steam, Bennett.",
     emoji: '💥',
     movieIds: [
-      2186,  // Commando (1985)
-      36669, // Raw Deal (1986)
-      9341,  // Red Heat (1988)
-      9932,  // The Running Man (1987)
-      9098,  // Eraser (1996)
+      10999, // Commando (1985)
+      2099,  // Raw Deal (1986)
+      9604,  // Red Heat (1988)
+      865,   // The Running Man (1987)
+      9268,  // Eraser (1996)
+      106,   // Predator (1987)
+      9387,  // Conan the Barbarian (1982)
     ],
   },
   kindergartenCop: {
@@ -57,10 +65,10 @@ export const personas: Record<PersonaId, Persona> = {
     catchphrase: "It's not a tumor!",
     emoji: '👶',
     movieIds: [
-      2189, // Kindergarten Cop (1990)
-      9900, // Jingle All the Way (1996)
-      9603, // Junior (1994)
-      3687, // Twins (1988)
+      951,  // Kindergarten Cop (1990)
+      9279, // Jingle All the Way (1996)
+      6280, // Junior (1994)
+      9493, // Twins (1988)
     ],
   },
   totalRecall: {
@@ -73,9 +81,9 @@ export const personas: Record<PersonaId, Persona> = {
     emoji: '🧠',
     movieIds: [
       861,  // Total Recall (1990)
-      1535, // The 6th Day (2000)
-      9904, // End of Days (1999)
-      9098, // Eraser (1996)
+      8452, // The 6th Day (2000)
+      9946, // End of Days (1999)
+      106,  // Predator (1987) — the paranoid jungle classic
     ],
   },
   trueLies: {
@@ -88,9 +96,8 @@ export const personas: Record<PersonaId, Persona> = {
     emoji: '🕶️',
     movieIds: [
       36955, // True Lies (1994)
-      9257,  // Last Action Hero (1993)
-      17654, // Collateral Damage (2002)
-      2188,  // True Lies (alt id, fallback)
+      9593,  // Last Action Hero (1993)
+      9884,  // Collateral Damage (2002)
     ],
   },
   mrFreeze: {
@@ -102,10 +109,10 @@ export const personas: Record<PersonaId, Persona> = {
     catchphrase: "Let's kick some ice!",
     emoji: '❄️',
     movieIds: [
-      414,   // Batman & Robin (1997)
-      19723, // Hercules in New York (1970)
-      9900,  // Jingle All the Way (1996)
-      9257,  // Last Action Hero (1993)
+      415,  // Batman & Robin (1997)
+      5227, // Hercules in New York (1970)
+      9279, // Jingle All the Way (1996)
+      9593, // Last Action Hero (1993)
     ],
   },
 };
