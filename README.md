@@ -76,6 +76,15 @@ The recommendation engine:
 - Returns 1–3 movies with Arnold-style commentary
 - Falls back to hardcoded Arnold movie IDs if the API fails
 
+### Experience details
+
+- **T-800 scan sequence** — a terminal-style boot/analysis animation plays while the persona verdict is computed ("MEASURING BICEP POTENTIAL… COUNTING EXPLOSIONS… 847")
+- **HUD persona reveal** — match percentage, glitch-animated persona name, and animated attribute bars (BRAINS / BOOM / HEART / CAMP / ONE-LINERS)
+- **Share your Arnold** — Web Share API with clipboard fallback
+- **Keyboard-first quiz** — keys 1-4 answer, arrows navigate, answers auto-advance
+- **Offline-resilient persona** — matching is a pure local function, so the persona reveals even if the TMDB fetch fails
+- **Easter egg** — click the title three times. GET TO THE CHOPPA. 🚁
+
 ---
 
 ## SEO & Structured Data
