@@ -30,6 +30,7 @@ export const personas: Record<PersonaId, Persona> = {
       'Cold precision. Zero wasted motion. You have a target and a timeline, and the only emotion allowed is relentless forward momentum. Nothing personal — just mission parameters.',
     catchphrase: "I'll be back.",
     emoji: '🤖',
+    stats: { brains: 85, boom: 90, heart: 10, camp: 20, oneLiners: 95 },
     movieIds: [
       218,    // The Terminator (1984)
       280,    // Terminator 2: Judgment Day (1991)
@@ -46,6 +47,7 @@ export const personas: Record<PersonaId, Persona> = {
       'Head empty, muscles full. You are a walking explosion in a tank top. Subtlety is for people who have not yet tried kicking down the door.',
     catchphrase: "Let off some steam, Bennett.",
     emoji: '💥',
+    stats: { brains: 15, boom: 100, heart: 40, camp: 60, oneLiners: 90 },
     movieIds: [
       10999, // Commando (1985)
       2099,  // Raw Deal (1986)
@@ -64,6 +66,7 @@ export const personas: Record<PersonaId, Persona> = {
       'Big muscles, bigger heart. Dad energy with a holster. You could snap a spine but instead you would rather read bedtime stories and wear ugly sweaters.',
     catchphrase: "It's not a tumor!",
     emoji: '👶',
+    stats: { brains: 55, boom: 35, heart: 100, camp: 55, oneLiners: 70 },
     movieIds: [
       951,  // Kindergarten Cop (1990)
       9279, // Jingle All the Way (1996)
@@ -79,6 +82,7 @@ export const personas: Record<PersonaId, Persona> = {
       'Is this even real? You question every memory, every shadow, every handshake. The answer is always "blow it up and ask questions later" — but thoughtfully.',
     catchphrase: 'Get your ass to Mars.',
     emoji: '🧠',
+    stats: { brains: 100, boom: 75, heart: 35, camp: 40, oneLiners: 65 },
     movieIds: [
       861,  // Total Recall (1990)
       8452, // The 6th Day (2000)
@@ -94,6 +98,7 @@ export const personas: Record<PersonaId, Persona> = {
       'Secret agent at work, family man at home, charm offensive everywhere. You live two lives, both stylish, both involving at least one helicopter explosion.',
     catchphrase: 'You are fired.',
     emoji: '🕶️',
+    stats: { brains: 70, boom: 80, heart: 65, camp: 50, oneLiners: 75 },
     movieIds: [
       36955, // True Lies (1994)
       9593,  // Last Action Hero (1993)
@@ -108,6 +113,7 @@ export const personas: Record<PersonaId, Persona> = {
       'Every sentence a pun. Every pun a crime against screenwriting. You embrace the chaos, deliver it with a straight face, and refuse to apologize.',
     catchphrase: "Let's kick some ice!",
     emoji: '❄️',
+    stats: { brains: 40, boom: 45, heart: 30, camp: 100, oneLiners: 100 },
     movieIds: [
       415,  // Batman & Robin (1997)
       5227, // Hercules in New York (1970)
@@ -273,6 +279,17 @@ export function matchPersona(quiz: QuizState): PersonaMatch {
 
   // Build reason list: dimensions where the winner has the highest weight for this answer
   const winnerSig = signatures[winnerId];
+
+  // Match percentage: winner score relative to that persona's best possible score.
+  const maxPossible = dimensions.reduce((sum, dim) => {
+    const weights = Object.values(winnerSig[dim] as Record<string, number>);
+    return sum + (weights.length > 0 ? Math.max(...weights) : 0);
+  }, 0);
+  const matchPercent =
+    maxPossible > 0
+      ? Math.min(100, Math.round((winnerScore / maxPossible) * 100))
+      : 0;
+
   const reasons: string[] = [];
   for (const dim of dimensions) {
     const answer = quizAnswers[dim];
@@ -286,6 +303,7 @@ export function matchPersona(quiz: QuizState): PersonaMatch {
   return {
     personaId: winnerId,
     score: winnerScore,
+    matchPercent,
     runnerUp: runnerUpId,
     reasons: reasons.slice(0, 4), // Cap at 4 for readability
   };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type {
   QuizState,
   BrainLevel,
@@ -24,6 +24,8 @@ type QuestionId = Exclude<keyof QuizState, 'arnoldLevel'>;
 
 type Question = {
   id: QuestionId;
+  /** HUD-style step label shown in the progress bar. */
+  hudLabel: string;
   question: string;
   options: Array<{ value: string; label: string }>;
 };
@@ -32,9 +34,13 @@ const defaultState: Partial<QuizState> = {
   arnoldLevel: 'full', // Always Arnold movies
 };
 
+/** Delay before auto-advancing to the next question after picking an answer. */
+const AUTO_ADVANCE_MS = 450;
+
 const questions: Question[] = [
   {
     id: 'brainLevel',
+    hudLabel: 'BRAIN SCAN',
     question: 'How much brain do you have left today?',
     options: [
       { value: 'low' satisfies BrainLevel, label: 'Max one catchphrase per scene, please' },
@@ -44,6 +50,7 @@ const questions: Question[] = [
   },
   {
     id: 'energy',
+    hudLabel: 'EXPLOSION AUDIT',
     question: 'How much explosion in your evening?',
     options: [
       { value: 'low' satisfies EnergyLevel, label: 'Slow / atmospheric' },
@@ -53,6 +60,7 @@ const questions: Question[] = [
   },
   {
     id: 'era',
+    hudLabel: 'ERA CALIBRATION',
     question: 'Era preference',
     options: [
       { value: '80s' satisfies Era, label: 'VHS / nostalgia' },
@@ -63,6 +71,7 @@ const questions: Question[] = [
   },
   {
     id: 'mood',
+    hudLabel: 'MOOD ANALYSIS',
     question: 'Mood',
     options: [
       { value: 'funny' satisfies Mood, label: 'Comedy / self-aware action' },
@@ -72,6 +81,7 @@ const questions: Question[] = [
   },
   {
     id: 'decisionStyle',
+    hudLabel: 'DECISION MATRIX',
     question: 'How do you make decisions?',
     options: [
       { value: 'gut' satisfies DecisionStyle, label: 'From the gut — trust the vibe' },
@@ -81,6 +91,7 @@ const questions: Question[] = [
   },
   {
     id: 'workoutVibe',
+    hudLabel: 'MUSCLE PROTOCOL',
     question: 'Your ideal workout?',
     options: [
       { value: 'pumpIron' satisfies WorkoutVibe, label: "Pump iron until you can't lift a fork" },
@@ -90,6 +101,7 @@ const questions: Question[] = [
   },
   {
     id: 'catchphraseEnergy',
+    hudLabel: 'CATCHPHRASE TEST',
     question: 'Your go-to line when things get intense?',
     options: [
       { value: 'oneLiner' satisfies CatchphraseEnergy, label: "Short and memorable (I'll be back)" },
@@ -114,34 +126,57 @@ function isComplete(state: Partial<QuizState>): state is QuizState {
 export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
   const [quizState, setQuizState] = useState<Partial<QuizState>>(defaultState);
   const [currentStep, setCurrentStep] = useState(0);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Track quiz started on mount
   useEffect(() => {
     trackEvent(UmamiEvents.QUIZ_STARTED);
   }, []);
 
+  // Clear any pending auto-advance on unmount
+  useEffect(() => {
+    return () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    };
+  }, []);
+
   const currentQuestion = questions[currentStep];
   const isLastStep = currentStep === questions.length - 1;
   const isFirstStep = currentStep === 0;
 
-  const handleNext = () => {
-    if (currentStep < questions.length - 1) {
-      trackEvent(UmamiEvents.QUIZ_NEXT_CLICKED, {
-        currentStep: (currentStep + 1).toString(),
-        totalSteps: questions.length.toString(),
-      });
-      setCurrentStep(currentStep + 1);
+  const cancelPendingAdvance = () => {
+    if (advanceTimer.current) {
+      clearTimeout(advanceTimer.current);
+      advanceTimer.current = null;
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      trackEvent(UmamiEvents.QUIZ_PREVIOUS_CLICKED, {
-        currentStep: (currentStep + 1).toString(),
-      });
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  const handleNext = useCallback(() => {
+    cancelPendingAdvance();
+    setCurrentStep((step) => {
+      if (step < questions.length - 1) {
+        trackEvent(UmamiEvents.QUIZ_NEXT_CLICKED, {
+          currentStep: (step + 1).toString(),
+          totalSteps: questions.length.toString(),
+        });
+        return step + 1;
+      }
+      return step;
+    });
+  }, []);
+
+  const handlePrevious = useCallback(() => {
+    cancelPendingAdvance();
+    setCurrentStep((step) => {
+      if (step > 0) {
+        trackEvent(UmamiEvents.QUIZ_PREVIOUS_CLICKED, {
+          currentStep: (step + 1).toString(),
+        });
+        return step - 1;
+      }
+      return step;
+    });
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,9 +195,49 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
       answer: value,
       step: (currentStep + 1).toString(),
     });
+
+    // Auto-advance to keep the flow snappy. The last step never auto-submits:
+    // the big red button deserves a deliberate press.
+    if (!isLastStep) {
+      cancelPendingAdvance();
+      advanceTimer.current = setTimeout(() => {
+        advanceTimer.current = null;
+        setCurrentStep((step) => Math.min(step + 1, questions.length - 1));
+      }, AUTO_ADVANCE_MS);
+    }
   };
 
   const currentAnswer = (quizState[currentQuestion.id] as string | undefined) || '';
+
+  // Keyboard controls: 1-9 selects an option, arrows navigate.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isLoading) return;
+      // Don't hijack keys when a modifier is held (browser shortcuts).
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const optionIndex = Number.parseInt(e.key, 10) - 1;
+      if (
+        !Number.isNaN(optionIndex) &&
+        optionIndex >= 0 &&
+        optionIndex < currentQuestion.options.length
+      ) {
+        e.preventDefault();
+        handleQuestionChange(currentQuestion.options[optionIndex].value);
+        return;
+      }
+      if (e.key === 'ArrowRight' && currentAnswer && !isLastStep) {
+        e.preventDefault();
+        handleNext();
+      } else if (e.key === 'ArrowLeft' && !isFirstStep) {
+        e.preventDefault();
+        handlePrevious();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, currentAnswer, isLoading, isLastStep, isFirstStep, quizState]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10 relative z-10" noValidate>
@@ -170,7 +245,7 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
       <div className="space-y-2">
         <div className="flex justify-between items-center text-sm font-mono text-primary/80 uppercase tracking-wider">
           <span>
-            Target Acquired: {currentStep + 1}/{questions.length}
+            {currentQuestion.hudLabel} — {currentStep + 1}/{questions.length}
           </span>
           <span>{Math.round(((currentStep + 1) / questions.length) * 100)}%</span>
         </div>
@@ -187,6 +262,7 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
         <div className="flex-1 relative z-10">
           <QuizQuestion
+            key={currentStep}
             question={currentQuestion.question}
             value={currentAnswer}
             onChange={handleQuestionChange}
@@ -228,6 +304,11 @@ export function QuizForm({ onSubmit, isLoading = false }: QuizFormProps) {
           )}
         </div>
       </div>
+
+      {/* Keyboard hint — desktop only */}
+      <p className="hidden md:block text-center font-mono text-xs text-white/30 uppercase tracking-widest">
+        TIP: KEYS 1-4 TO ANSWER · ← → TO NAVIGATE
+      </p>
     </form>
   );
 }
