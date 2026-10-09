@@ -1,29 +1,56 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { QuizState, RecommendedMovie, PersonaMatch } from '@/types/quiz';
 import { QuizForm } from '@/components/Quiz/QuizForm';
 import { ResultList } from '@/components/Result/ResultList';
 import { PersonaCard } from '@/components/Result/PersonaCard';
-import { Skeleton } from '@/components/ui/skeleton';
+import { AnalysisSequence } from '@/components/AnalysisSequence';
+import { ChoppaRain } from '@/components/ChoppaRain';
 import { Card } from '@/components/ui/card';
 import { getRecommendations } from '@/lib/tmdb-client';
-import { listPersonas } from '@/lib/personas';
+import { listPersonas, matchPersona } from '@/lib/personas';
 import { trackEvent, UmamiEvents } from '@/lib/umami';
+
+/** Clicks on the title within this window trigger the easter egg. */
+const CHOPPA_CLICKS = 3;
+const CHOPPA_CLICK_WINDOW_MS = 1500;
 
 export default function Home() {
   const [movies, setMovies] = useState<RecommendedMovie[]>([]);
   const [persona, setPersona] = useState<PersonaMatch | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [scanDone, setScanDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [choppaActive, setChoppaActive] = useState(false);
+  const titleClicks = useRef<{ count: number; last: number }>({ count: 0, last: 0 });
+
+  const handleScanComplete = useCallback(() => setScanDone(true), []);
+  const handleChoppaDone = useCallback(() => setChoppaActive(false), []);
+
+  const handleTitleClick = () => {
+    const now = Date.now();
+    const clicks = titleClicks.current;
+    clicks.count = now - clicks.last < CHOPPA_CLICK_WINDOW_MS ? clicks.count + 1 : 1;
+    clicks.last = now;
+    if (clicks.count >= CHOPPA_CLICKS) {
+      clicks.count = 0;
+      setChoppaActive(true);
+      trackEvent(UmamiEvents.CHOPPA_TRIGGERED);
+    }
+  };
 
   const handleQuizSubmit = async (quizState: QuizState) => {
     setIsLoading(true);
     setHasSubmitted(true);
+    setScanDone(false);
     setMovies([]);
-    setPersona(null);
     setError(null);
+
+    // Persona matching is a pure local function — reveal it even if the
+    // movie fetch below fails. The scan sequence plays while we fetch.
+    setPersona(matchPersona(quizState));
 
     // Track quiz completion (include new dimensions)
     trackEvent(UmamiEvents.QUIZ_COMPLETED, {
@@ -61,9 +88,9 @@ export default function Home() {
         err instanceof Error
           ? err.message
           : 'Failed to fetch recommendations. Please try again.';
+      // Keep the persona — only the movie fetch failed.
       setError(errorMessage);
       setMovies([]);
-      setPersona(null);
     } finally {
       setIsLoading(false);
     }
@@ -74,9 +101,12 @@ export default function Home() {
     setMovies([]);
     setPersona(null);
     setHasSubmitted(false);
+    setScanDone(false);
     setIsLoading(false);
     setError(null);
   };
+
+  const showResults = hasSubmitted && scanDone && !isLoading;
 
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
@@ -165,7 +195,17 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <main className="min-h-screen bg-background text-foreground relative overflow-hidden">
+      <main
+        className={`min-h-screen bg-background text-foreground relative overflow-hidden ${
+          choppaActive ? 'animate-screen-shake' : ''
+        }`}
+      >
+        {/* Easter egg: GET TO THE CHOPPA */}
+        {choppaActive && <ChoppaRain onDone={handleChoppaDone} />}
+
+        {/* CRT scanlines + vignette over everything */}
+        <div className="crt-overlay fixed inset-0 z-40 pointer-events-none" aria-hidden></div>
+
         {/* Cinematic Deep Background */}
         <div className="absolute inset-0 bg-[#050505] pointer-events-none"></div>
 
@@ -179,71 +219,46 @@ export default function Home() {
           {/* Hero Section */}
           <header className="text-center mb-16 space-y-6 relative">
             <div className="inline-flex items-center justify-center relative">
-              <h1 className="relative text-7xl md:text-8xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-primary/80 tracking-tighter uppercase neon-text transform hover:scale-[1.02] transition-transform duration-500">
+              <h1
+                onClick={handleTitleClick}
+                title="Click me three times. I dare you."
+                className="relative text-7xl md:text-8xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-primary/80 tracking-tighter uppercase neon-text transform hover:scale-[1.02] transition-transform duration-500 cursor-pointer select-none"
+              >
                 GET TO THE MOVIE!
               </h1>
             </div>
             <p className="text-xl md:text-2xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed font-light">
               Which Arnold ARE you? Answer 7 questions, discover your Arnold persona, and get matching movies with over-the-top Arnold commentary. <br />
-              <span className="text-primary/80 font-bold uppercase tracking-widest text-sm mt-4 block">
+              <span className="animate-flicker text-primary/80 font-bold uppercase tracking-widest text-sm mt-4 block">
                 Terminator mode engaged //
               </span>
             </p>
           </header>
 
-          {/* Quiz or Results */}
+          {/* Quiz → Scan sequence → Results */}
           {!hasSubmitted ? (
             <div className="space-y-8 relative z-20">
               <QuizForm onSubmit={handleQuizSubmit} isLoading={isLoading} />
-
-              {error && !isLoading && (
-                <Card className="mt-8 p-6 border-destructive/50 bg-destructive/10 backdrop-blur-sm">
-                  <p className="text-destructive text-center font-semibold">{error}</p>
-                </Card>
-              )}
-
-              {isLoading && (
-                <div className="mt-8 relative overflow-hidden glass-panel rounded-xl p-8 shadow-primary/20 shadow-2xl">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/30 to-transparent h-10 w-full animate-scan z-0 opacity-50 blur-sm pointer-events-none"></div>
-
-                  <div className="relative z-10 space-y-6">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-3 h-3 rounded-full bg-primary animate-ping"></div>
-                      <p className="text-primary font-mono text-sm uppercase tracking-widest">
-                        Processing Neural Net Data...
-                      </p>
-                    </div>
-
-                    <div className="space-y-3 opacity-60">
-                      <Skeleton className="h-10 w-3/4 bg-primary/20" />
-                      <Skeleton className="h-5 w-full bg-border" />
-                      <Skeleton className="h-5 w-5/6 bg-border" />
-                    </div>
-                    <div className="flex gap-6 mt-8 opacity-60">
-                      <Skeleton className="h-80 w-56 rounded-lg bg-primary/10 border border-primary/20" />
-                      <div className="flex-1 space-y-3">
-                        <Skeleton className="h-8 w-2/3 bg-primary/20" />
-                        <Skeleton className="h-4 w-full bg-border" />
-                        <Skeleton className="h-4 w-full bg-border" />
-                        <Skeleton className="h-4 w-4/5 bg-border" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-8 text-center relative z-10">
-                    <p className="text-2xl font-black text-white uppercase tracking-widest neon-text animate-pulse">
-                      Arnold is thinking...
-                    </p>
-                  </div>
-                </div>
-              )}
+            </div>
+          ) : !showResults ? (
+            <div className="relative z-20">
+              <AnalysisSequence onComplete={handleScanComplete} holdAtEnd={isLoading} />
             </div>
           ) : (
             <div className="space-y-10 relative z-20">
+              {/* Primary result: the persona is computed locally and always available */}
+              {persona && <PersonaCard match={persona} />}
+
               {error ? (
                 <Card className="p-8 border-destructive/50 bg-destructive/10 backdrop-blur-sm">
                   <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold text-destructive">Error</h2>
+                    <h2 className="text-2xl font-bold text-destructive uppercase tracking-wider">
+                      Movie Uplink Failed
+                    </h2>
                     <p className="text-muted-foreground">{error}</p>
+                    <p className="text-muted-foreground text-sm font-mono uppercase tracking-wider">
+                      Your persona survived. The movie list did not.
+                    </p>
                     <button
                       onClick={(e) => {
                         e.preventDefault();
@@ -258,11 +273,8 @@ export default function Home() {
                     </button>
                   </div>
                 </Card>
-              ) : persona && movies.length > 0 ? (
+              ) : movies.length > 0 ? (
                 <>
-                  {/* Primary result: persona reveal */}
-                  <PersonaCard match={persona} />
-
                   {/* Secondary result: movie recommendations */}
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-4">
                     <div>

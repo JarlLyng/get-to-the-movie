@@ -24,5 +24,7 @@ export const UmamiEvents = {
   QUIZ_QUESTION_ANSWERED: 'quiz_question_answered',
   QUIZ_NEXT_CLICKED: 'quiz_next_clicked',
   QUIZ_PREVIOUS_CLICKED: 'quiz_previous_clicked',
+  RESULT_SHARED: 'result_shared',
+  CHOPPA_TRIGGERED: 'choppa_easter_egg',
 } as const;
 

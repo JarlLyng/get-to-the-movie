@@ -34,6 +34,8 @@ export type RecommendedMovie = {
 export type PersonaMatch = {
   personaId: PersonaId;
   score: number;
+  /** Winner score as a percentage of that persona's max possible score (0-100). */
+  matchPercent: number;
   /** Second-best persona — used for "you're a bit of X too" messaging. */
   runnerUp: PersonaId;
   /** Explanation of why this persona matched — used in "Why this result" UI. */
