@@ -10,7 +10,7 @@ type PersonaCardProps = {
   match: PersonaMatch;
 };
 
-const SITE_URL = 'https://gettothemovie.iamjarl.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://gettothemovie.iamjarl.com';
 
 const STAT_LABELS: Array<{ key: keyof PersonaStats; label: string }> = [
   { key: 'brains', label: 'BRAINS' },
@@ -35,18 +35,20 @@ export function PersonaCard({ match }: PersonaCardProps) {
 
   const handleShare = async () => {
     const text = `I got ${persona.name.toUpperCase()} ${persona.emoji} — ${persona.tagline} (${match.matchPercent}% match). Which Arnold are YOU?`;
+    // The per-persona page carries an OG image of this exact result.
+    const shareUrl = `${SITE_URL}/share/${persona.id}`;
     trackEvent(UmamiEvents.RESULT_SHARED, { persona: persona.id });
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title: 'Get to the Movie!', text, url: SITE_URL });
+        await navigator.share({ title: 'Get to the Movie!', text, url: shareUrl });
         return;
       } catch {
         // User cancelled the share sheet — fall through to clipboard.
       }
     }
     try {
-      await navigator.clipboard.writeText(`${text} ${SITE_URL}`);
+      await navigator.clipboard.writeText(`${text} ${shareUrl}`);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
