@@ -1,24 +1,27 @@
 # Get to the Movie!
 
-> Arnold Schwarzenegger movie recommendation quiz
+> A quiz that matches you to one of six Arnold Schwarzenegger personas and recommends his films that fit it.
 
-Get to the Movie! is a free interactive quiz where you answer 4 personality-based questions and get personalized Arnold Schwarzenegger movie recommendations with over-the-top Arnold-style commentary.
+Get to the Movie! is a free web quiz. You answer 7 questions and get matched to one of six Arnold personas: Terminator, Commando, Kindergarten Cop, Total Recall, True Lies or Mr. Freeze. The result shows your persona, the runner-up and why you matched, followed by up to three Arnold films for that persona, each with a line of Arnold-style commentary.
 
 ## How it works
-1. Answer 4 questions: mood, energy level, brain capacity, and era preference
-2. The recommendation engine matches your answers against Arnold's full filmography via TMDB
-3. Get 1-3 personalized movie recommendations with Arnold commentary
+1. Answer 7 questions about your mood, energy, brain capacity, era preference, decision style, workout vibe and catchphrase energy.
+2. Each persona weights those answers differently, and the highest total wins.
+3. Every persona has a short hand-picked list of Arnold films. The quiz fetches them from TMDB, puts the ones from your preferred era first, sorts by rating, and shows up to three.
 
-## Top Arnold Movies Featured
-- The Terminator (1984) — sci-fi action classic
-- Predator (1987) — military sci-fi
-- Total Recall (1990) — mind-bending action
-- Terminator 2: Judgment Day (1991) — groundbreaking sequel
-- True Lies (1994) — action comedy
+## The personas
+- Terminator Arnold (The Machine): the Terminator films
+- Commando Arnold (Pure 80s Firepower): Commando, Predator, The Running Man and other 80s action
+- Kindergarten Cop Arnold (Heart of Gold): Kindergarten Cop, Twins, Junior, Jingle All the Way
+- Total Recall Arnold (The Paranoid Thinker): Total Recall, The 6th Day, End of Days
+- True Lies Arnold (The Smooth Operator): True Lies, Last Action Hero, Collateral Damage
+- Mr. Freeze Arnold (The Camp King): Batman & Robin, Hercules in New York
+
+Each persona has a share page at https://gettothemovie.iamjarl.com/share/{persona}, for example /share/commando.
 
 ## Technical
-- Built with Next.js 16 (static export)
-- TMDB API for movie data
+- Built with Next.js 16 as a static site
+- Movie data from the TMDB API
 - Free, no account needed
 
 ## Links
