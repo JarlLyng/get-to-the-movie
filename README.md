@@ -2,10 +2,10 @@
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
-An Arnold Schwarzenegger movie recommendation quiz. Answer 4 personality-driven questions and get 1–3 personalized movie recommendations with over-the-top Arnold-style commentary.
+A quiz that tells you which Arnold Schwarzenegger you are. You answer 7 questions, get matched to one of six Arnold personas, and get up to three of his films that fit that persona, each with a line of over-the-top Arnold commentary.
 
-**Live:** https://gettothemovie.iamjarl.com  
-**Author:** [Jarl Lyng](https://iamjarl.com)
+**Live:** https://gettothemovie.iamjarl.com
+**Made by:** [Jarl](https://iamjarl.com)
 
 ---
 
@@ -15,10 +15,11 @@ An Arnold Schwarzenegger movie recommendation quiz. Answer 4 personality-driven 
 |-------|-----------|
 | Framework | Next.js 16 (App Router, static export) |
 | Language | TypeScript |
-| Styling | Tailwind CSS 4 + IAMJARL Design System tokens |
-| Components | shadcn/ui (Radix UI-based) |
+| Styling | Tailwind CSS 4 with IAMJARL design tokens |
+| Components | shadcn/ui (Radix UI based) |
 | Icons | Phosphor React |
-| Movie data | TMDB API v3 (client-side) |
+| Movie data | TMDB API v3 (client side) |
+| Share images | `next/og`, rendered at build time |
 | Analytics | Umami (self-hosted) |
 | Hosting | GitHub Pages (custom domain) |
 | CI/CD | GitHub Actions |
@@ -30,91 +31,65 @@ An Arnold Schwarzenegger movie recommendation quiz. Answer 4 personality-driven 
 ```
 src/
 ├── app/
-│   ├── layout.tsx          # Root layout, metadata, OG tags, analytics
-│   ├── page.tsx            # Main page: quiz, results, FAQ, How It Works, footer
-│   ├── sitemap.ts          # Auto-generated sitemap
-│   └── globals.css         # Tailwind + IAMJARL design tokens (CSS variables)
+│   ├── layout.tsx               # Root layout, metadata, OG tags, analytics
+│   ├── page.tsx                 # Main page: quiz, results, How It Works, personas, FAQ, footer
+│   ├── sitemap.ts               # Sitemap, including the share pages
+│   ├── globals.css              # Tailwind, design tokens and animations
+│   └── share/[persona]/
+│       ├── page.tsx             # Share landing page per persona, with its own OG tags
+│       └── card.png/route.tsx   # 1200x630 share card per persona, prerendered at build
 ├── components/
+│   ├── AnalysisSequence.tsx     # Terminal-style scan shown while the result loads
+│   ├── ChoppaRain.tsx           # Easter egg
 │   ├── Quiz/
-│   │   ├── QuizForm.tsx    # 4-step quiz with progress indicator
+│   │   ├── QuizForm.tsx         # 7-step quiz with progress bar and keyboard shortcuts
 │   │   └── QuizQuestion.tsx
 │   ├── Result/
-│   │   ├── ResultList.tsx  # Movie recommendation list
-│   │   └── MovieCard.tsx   # Single movie card with Arnold comment
-│   └── ui/                 # shadcn/ui components
+│   │   ├── PersonaCard.tsx      # Persona reveal, attribute bars and share button
+│   │   ├── ResultList.tsx       # Movie list
+│   │   └── MovieCard.tsx        # One movie with its Arnold comment
+│   └── ui/                      # shadcn/ui components
 ├── lib/
-│   ├── tmdb-client.ts      # TMDB API integration + recommendation logic
-│   ├── arnold-comments.ts  # Arnold-style commentary generator
-│   ├── umami.ts            # Analytics event tracking
-│   ├── design-tokens.ts    # IAMJARL Design System tokens (TypeScript)
+│   ├── personas.ts              # The six personas, their films and the matching logic
+│   ├── tmdb-client.ts           # Fetches the persona's films from TMDB and ranks them
+│   ├── arnold-comments.ts       # Arnold-style comment per film
+│   ├── share-card.tsx           # Renders the share card image
+│   ├── umami.ts                 # Analytics events
 │   └── utils.ts
 └── types/
-    └── quiz.ts             # Domain types (QuizState, RecommendedMovie, etc.)
+    ├── persona.ts               # Persona and PersonaStats
+    └── quiz.ts                  # QuizState, PersonaMatch, RecommendedMovie
 
 public/
-├── robots.txt              # SEO: crawler directives
-├── og-image.png            # Open Graph image (1200x630)
-├── favicon.ico
+├── robots.txt
+├── llms.txt
+├── og-image.png                 # Default Open Graph image (1200x630)
 └── icon-*.png, apple-touch-icon.png
 ```
 
 ---
 
-## Quiz Flow
+## How the quiz works
 
-Users answer 4 questions:
+The quiz asks about brain level, energy, era, mood, decision style, workout vibe and catchphrase energy. Each persona has a signature that weights some of those answers, and the persona with the highest total wins. The result also shows the runner-up, how close the match is as a percentage of that persona's best possible score, and the answers that decided it.
 
-1. **Brain Level** — "How much brain do you have left today?" (low / medium / high)
-2. **Energy Level** — "How much explosion in your evening?" (low / medium / high)
-3. **Era** — Movie release era (80s / 90s / modern / any)
-4. **Mood** — Tone preference (funny / action / dark)
+The six personas are Terminator, Commando, Kindergarten Cop, Total Recall, True Lies and Mr. Freeze. Each one has a short hand-picked list of TMDB movie IDs in `personas.ts`. The app fetches those films from TMDB, puts the ones from your preferred era first, sorts by rating within that, and shows up to three. There is no search across Arnold's whole filmography.
 
-The recommendation engine:
-- Fetches Arnold Schwarzenegger movies from TMDB (cast ID 1100)
-- Filters by era and genre based on mood
-- Scores by vote_average + popularity weighted by energy and brain level
-- Returns 1–3 movies with Arnold-style commentary
-- Falls back to hardcoded Arnold movie IDs if the API fails
+Matching runs locally before anything is fetched, so if TMDB fails you still see your persona, with a note that the movie list could not load.
 
-### Experience details
-
-- **T-800 scan sequence** — a terminal-style boot/analysis animation plays while the persona verdict is computed ("MEASURING BICEP POTENTIAL… COUNTING EXPLOSIONS… 847")
-- **HUD persona reveal** — match percentage, glitch-animated persona name, and animated attribute bars (BRAINS / BOOM / HEART / CAMP / ONE-LINERS)
-- **Share your Arnold** — Web Share API with clipboard fallback
-- **Keyboard-first quiz** — keys 1-4 answer, arrows navigate, answers auto-advance
-- **Offline-resilient persona** — matching is a pure local function, so the persona reveals even if the TMDB fetch fails
-- **Easter egg** — click the title three times. GET TO THE CHOPPA. 🚁
+A few smaller things. While the result loads, a terminal-style scan plays. The quiz moves to the next question once you answer, and the number keys and arrow keys work too. The share button opens your device's share sheet, or copies the link if there is none, and the link goes to a page for your persona with its own preview image. Clicking the title three times starts an easter egg.
 
 ---
 
-## SEO & Structured Data
+## SEO and structured data
 
-The site has comprehensive SEO implementation. See these docs for details:
-
-| Document | Purpose |
-|----------|---------|
-| [SEO_CHECKLIST.md](./SEO_CHECKLIST.md) | What's implemented, with file paths for each feature |
-| [SEO_STRATEGY.md](./SEO_STRATEGY.md) | Full SEO/GEO strategy: keywords, content plan, distribution, roadmap |
-
-### Key SEO features
-- JSON-LD `@graph` stacking: WebApplication + ItemList + FAQPage
-- Open Graph + Twitter Card tags with custom OG image
-- "How It Works" + FAQ sections for crawlable text content
-- TMDB attribution in footer (required by TMDB ToS)
-- Auto-generated sitemap + robots.txt
-- Umami analytics with quiz event tracking
+The main page carries JSON-LD in one `@graph` with WebApplication, ItemList (the personas) and FAQPage. There are Open Graph and Twitter Card tags, and each share page has its own. The How It Works, persona and FAQ sections give crawlers real text to read. TMDB is credited in the footer, as their terms require. The sitemap and `robots.txt` are generated at build time.
 
 ---
 
-## Design System
+## Design
 
-Uses the **IAMJARL Design System** with CSS custom properties:
-
-- **Dark mode** enabled by default (`className="dark"` on `<html>`)
-- **Primary color:** `#D0FF00` (lime green) in dark mode
-- **Background:** `#000000` / **Text:** `#FFFFFF`
-- **Typography:** system-ui (platform native fonts)
-- **Tokens** defined in `src/app/globals.css` and `src/lib/design-tokens.ts`
+The site is dark only. Colours, radii and animations live as CSS custom properties in `src/app/globals.css`. The primary colour is red (`#FF2A2A`) on a near-black background (`#050505`). Headings use Outfit and body text uses Inter, both loaded with `next/font`.
 
 ---
 
@@ -134,7 +109,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-App runs at http://localhost:3000.
+The app runs at http://localhost:3000. Without an API key the quiz still works and shows your persona, but the movie list will not load.
 
 ### Build
 
@@ -142,31 +117,26 @@ App runs at http://localhost:3000.
 npm run build
 ```
 
-Produces a static export in `out/` directory.
+With `NEXT_PUBLIC_BASE_PATH` set (an empty string is fine), the build is a static export in `out/`, which is what the deploy workflow does. The build needs network access, because it downloads fonts.
 
 ---
 
 ## Deployment
 
-Deployed via **GitHub Actions** to **GitHub Pages** with custom domain.
-
-- **Workflow:** `.github/workflows/deploy.yml`
-- **Trigger:** Push to `main` branch or manual dispatch
-- **Domain:** `gettothemovie.iamjarl.com` (CNAME configured)
-- **Secrets required:** `TMDB_API_KEY` in GitHub repository secrets
+GitHub Actions builds the site and deploys it to GitHub Pages on every push to `main`, or by hand from the Actions tab. The workflow is `.github/workflows/deploy.yml`, the domain is `gettothemovie.iamjarl.com`, and the TMDB key comes from the `TMDB_API_KEY` repository secret.
 
 ### Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `NEXT_PUBLIC_TMDB_API_KEY` | Yes | TMDB API v3 key (exposed in client bundle — acceptable for read-only keys) |
+| `NEXT_PUBLIC_TMDB_API_KEY` | Yes | TMDB API v3 key. It ends up in the client bundle, which is fine for a read-only key. |
 | `NEXT_PUBLIC_SITE_URL` | No | Defaults to `https://gettothemovie.iamjarl.com` |
-| `NEXT_PUBLIC_BASE_PATH` | No | Empty for custom domain deployment |
+| `NEXT_PUBLIC_BASE_PATH` | No | Turns on static export. Empty for the custom domain. |
 
 ---
 
 ## Related Projects
 
-- [iamjarl.com](https://iamjarl.com) — Portfolio hub
-- [madebyhuman.iamjarl.com](https://madebyhuman.iamjarl.com) — AI transparency badge
-- [emotionwave.iamjarl.com](https://emotionwave.iamjarl.com) — AI-powered entertainment
+- [iamjarl.com](https://iamjarl.com): the portfolio hub
+- [madebyhuman.iamjarl.com](https://madebyhuman.iamjarl.com): a badge for saying how much AI went into a project
+- [emotionwave.iamjarl.com](https://emotionwave.iamjarl.com): a live visualisation of sentiment
