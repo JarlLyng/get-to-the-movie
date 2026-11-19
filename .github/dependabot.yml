@@ -1,42 +1,32 @@
 version: 2
 updates:
-  # Enable version updates for npm
   - package-ecosystem: "npm"
     directory: "/"
+    # One batch a month. Security updates still open as soon as an alert lands.
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 10
+      interval: "monthly"
+    open-pull-requests-limit: 5
     labels:
       - "dependencies"
       - "automated"
     commit-message:
       prefix: "chore"
       include: "scope"
-    # Group updates for related packages
     groups:
-      radix-ui:
+      # All security fixes in one PR instead of one per package.
+      security:
+        applies-to: security-updates
         patterns:
-          - "@radix-ui/*"
-      types:
+          - "*"
+      # All minor and patch bumps in one PR. Majors still open on their own.
+      minor-and-patch:
+        applies-to: version-updates
         patterns:
-          - "@types/*"
-      nextjs:
-        patterns:
-          - "next"
-          - "eslint-config-next"
-      react:
-        patterns:
-          - "react"
-          - "react-dom"
-          - "@types/react"
-          - "@types/react-dom"
-      tailwind:
-        patterns:
-          - "tailwindcss"
-          - "@tailwindcss/*"
-    # Ignore major version updates for critical packages (review manually)
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Major versions of these are reviewed by hand.
     ignore:
       - dependency-name: "next"
         update-types: ["version-update:semver-major"]
@@ -51,7 +41,6 @@ updates:
       - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
 
-  # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -59,4 +48,7 @@ updates:
     labels:
       - "github-actions"
       - "automated"
-
+    groups:
+      actions:
+        patterns:
+          - "*"
