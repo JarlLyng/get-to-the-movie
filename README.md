@@ -96,7 +96,7 @@ The site is dark only. Colours, radii and animations live as CSS custom properti
 ## Development
 
 ### Prerequisites
-- Node.js 20+
+- Node.js 20.9 or newer (CI uses 24)
 - TMDB API key ([get one here](https://www.themoviedb.org/settings/api))
 
 ### Setup
