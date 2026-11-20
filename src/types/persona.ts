@@ -32,6 +32,9 @@ export type Persona = {
   emoji: string;          // Visual identifier
   /** HUD attribute bars (0-100). */
   stats: PersonaStats;
-  /** TMDB movie IDs representative of this persona. */
+  /**
+   * TMDB movie IDs representative of this persona. The first one is the
+   * signature film and is always shown first in the results.
+   */
   movieIds: number[];
 };

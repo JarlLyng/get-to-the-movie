@@ -20,6 +20,9 @@ import type {
  *
  * If you add new movies: confirm Arnold is in the cast on the TMDB page,
  * not just that the ID resolves to a movie.
+ *
+ * The first ID in each list is the persona's signature film. It is always
+ * shown first, whatever the era and rating, so keep it at the top.
  */
 export const personas: Record<PersonaId, Persona> = {
   terminator: {
