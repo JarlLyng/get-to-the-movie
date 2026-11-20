@@ -45,9 +45,15 @@ async function fetchPersonaMovies(personaId: PersonaId, apiKey: string): Promise
 
 /**
  * Select which of the persona's films to show based on quiz preferences.
- * Returns 2-3 films sorted by relevance (era match first, then rating).
+ * The signature film (first in the persona's list) always comes first. The
+ * rest are sorted by relevance (era match first, then rating).
  */
-function selectMoviesForQuiz(movies: TMDBMovie[], quiz: QuizState, count = 3): TMDBMovie[] {
+function selectMoviesForQuiz(
+  movies: TMDBMovie[],
+  quiz: QuizState,
+  signatureId: number,
+  count = 3
+): TMDBMovie[] {
   if (movies.length === 0) return [];
 
   const matchesEra = (movie: TMDBMovie): boolean => {
@@ -59,14 +65,19 @@ function selectMoviesForQuiz(movies: TMDBMovie[], quiz: QuizState, count = 3): T
     return true;
   };
 
+  const signature = movies.find((movie) => movie.id === signatureId);
+  const rest = movies.filter((movie) => movie.id !== signatureId);
+
   // Score: era match (+10) + vote_average (0-10). Era-matching films win ties.
-  const scored = movies.map((movie) => ({
+  const scored = rest.map((movie) => ({
     movie,
     score: (matchesEra(movie) ? 10 : 0) + (movie.vote_average ?? 0),
   }));
 
   scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, count).map((s) => s.movie);
+  const ranked = scored.map((s) => s.movie);
+  // If the signature film failed to load, the ranked list fills its place.
+  return (signature ? [signature, ...ranked] : ranked).slice(0, count);
 }
 
 function transformToRecommendedMovie(
@@ -117,8 +128,9 @@ export async function getRecommendations(
     );
   }
 
-  // 3. Select 2-3 movies matching quiz era preferences
-  const selected = selectMoviesForQuiz(movies, quiz, 3);
+  // 3. Signature film first, then the best matches for the quiz's era preference
+  const signatureId = getPersona(persona.personaId).movieIds[0];
+  const selected = selectMoviesForQuiz(movies, quiz, signatureId, 3);
 
   return {
     persona,

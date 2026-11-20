@@ -73,7 +73,7 @@ public/
 
 The quiz asks about brain level, energy, era, mood, decision style, workout vibe and catchphrase energy. Each persona has a signature that weights some of those answers, and the persona with the highest total wins. The result also shows the runner-up, how close the match is as a percentage of that persona's best possible score, and the answers that decided it.
 
-The six personas are Terminator, Commando, Kindergarten Cop, Total Recall, True Lies and Mr. Freeze. Each one has a short hand-picked list of TMDB movie IDs in `personas.ts`. The app fetches those films from TMDB, puts the ones from your preferred era first, sorts by rating within that, and shows up to three. There is no search across Arnold's whole filmography.
+The six personas are Terminator, Commando, Kindergarten Cop, Total Recall, True Lies and Mr. Freeze. Each one has a short hand-picked list of TMDB movie IDs in `personas.ts`. The first ID in each list is the persona's signature film. The app fetches the films from TMDB and always shows the signature film first. It orders the rest with the ones from your preferred era first and by rating within that, and shows up to three in all. Some films are on more than one persona's list. There is no search across Arnold's whole filmography.
 
 Matching runs locally before anything is fetched, so if TMDB fails you still see your persona, with a note that the movie list could not load.
 

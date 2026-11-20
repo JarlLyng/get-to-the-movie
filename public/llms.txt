@@ -7,15 +7,16 @@ Get to the Movie! is a free web quiz. You answer 7 questions and get matched to 
 ## How it works
 1. Answer 7 questions about your mood, energy, brain capacity, era preference, decision style, workout vibe and catchphrase energy.
 2. Each persona weights those answers differently, and the highest total wins.
-3. Every persona has a short hand-picked list of Arnold films. The quiz fetches them from TMDB, puts the ones from your preferred era first, sorts by rating, and shows up to three.
+3. Every persona has a short hand-picked list of Arnold films, fetched from TMDB. The persona's signature film always comes first. The rest are ordered with the ones from your preferred era first, then by rating, and the quiz shows up to three in all.
 
 ## The personas
-- Terminator Arnold (The Machine): the Terminator films
-- Commando Arnold (Pure 80s Firepower): Commando, Predator, The Running Man and other 80s action
-- Kindergarten Cop Arnold (Heart of Gold): Kindergarten Cop, Twins, Junior, Jingle All the Way
-- Total Recall Arnold (The Paranoid Thinker): Total Recall, The 6th Day, End of Days
+The first film in each list is the signature film. Some films belong to more than one persona.
+- Terminator Arnold (The Machine): The Terminator, Terminator 2: Judgment Day, Terminator 3: Rise of the Machines, Terminator Genisys, Terminator: Dark Fate
+- Commando Arnold (Pure 80s Firepower): Commando, Raw Deal, Red Heat, The Running Man, Eraser, Predator, Conan the Barbarian
+- Kindergarten Cop Arnold (Heart of Gold): Kindergarten Cop, Jingle All the Way, Junior, Twins
+- Total Recall Arnold (The Paranoid Thinker): Total Recall, The 6th Day, End of Days, Predator
 - True Lies Arnold (The Smooth Operator): True Lies, Last Action Hero, Collateral Damage
-- Mr. Freeze Arnold (The Camp King): Batman & Robin, Hercules in New York
+- Mr. Freeze Arnold (The Camp King): Batman & Robin, Hercules in New York, Jingle All the Way, Last Action Hero
 
 Each persona has a share page at https://gettothemovie.iamjarl.com/share/{persona}, for example /share/commando.
 
